@@ -1,0 +1,18 @@
+<protocol>
+
+<namespace lang="cpp">protocol.client</namespace>
+<namespace lang="php">Protocol.Client</namespace>
+<namespace lang="csharp">Protocol.Client</namespace>
+
+<import>message_test.xml</import>
+
+<enum_map name="MessageType">
+  <item name="MIN" value="1001"/>
+  <item name="MSG_TEST" value="MIN" struct="message_test.MsgTest"/>
+  <item name="MSG_TEST2" value="1100" struct="message_test.MsgTest2"/>
+  <item name="MSG_TEST3" struct="message_test.MsgTest3"/>
+  <item name="MSG_TEST4" struct="message_test.MsgTest4"/>
+  <item name="MAX"/>
+</enum_map>
+
+</protocol>

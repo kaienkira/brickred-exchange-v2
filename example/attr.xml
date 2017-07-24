@@ -1,0 +1,29 @@
+<protocol>
+
+<namespace lang="cpp">protocol.client</namespace>
+<namespace lang="php">Protocol.Client</namespace>
+<namespace lang="csharp">Protocol.Client</namespace>
+
+<enum name="AttrType">
+  <item name="MIN" value="0"/>
+  <item name="STR" value="MIN"/>
+  <item name="AGI"/>
+  <item name="INT"/>
+  <item name="VIT"/>
+  <item name="DEX"/>
+  <item name="LUK"/>
+  <item name="MAX"/>
+</enum>
+
+<enum name="ExtAttrType">
+  <item name="MIN" value="AttrType.MAX"/>
+  <item name="HIT" value="MIN"/>
+  <item name="MAX"/>
+</enum>
+
+<struct name="Attr">
+  <required name="id" type="AttrType"/>
+  <required name="value" type="i32"/>
+</struct>
+
+</protocol>
