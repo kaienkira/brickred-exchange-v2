@@ -34,6 +34,8 @@
   <optional name="c1" type="i32"/>
   <optional name="c2" type="i32"/>
   <optional name="c3" type="list{i32}"/>
+  <optional name="c4" type="string"/>
+  <optional name="c5" type="bytes"/>
 </struct>
 
 <struct name="MsgTest2">
@@ -45,9 +47,23 @@
   <required name="a1" type="MsgTest"/>
   <required name="a2" type="MsgTest2"/>
   <required name="a3" type="list{MsgTest}"/>
+  <optional name="c1" type="MsgTest"/>
 </struct>
 
 <struct name="MsgTest4">
+</struct>
+
+<struct name="MsgTest5">
+  <optional name="c1" type="i32"/>
+  <optional name="c2" type="i32"/>
+  <optional name="c3" type="i32"/>
+  <optional name="c4" type="i32"/>
+  <optional name="c5" type="i32"/>
+  <optional name="c6" type="i32"/>
+  <optional name="c7" type="i32"/>
+  <optional name="c8" type="i32"/>
+  <optional name="c9" type="i32"/>
+  <optional name="c10" type="i32"/>
 </struct>
 
 </protocol>
