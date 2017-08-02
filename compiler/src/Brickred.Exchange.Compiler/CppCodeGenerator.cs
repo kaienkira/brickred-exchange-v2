@@ -646,34 +646,36 @@ namespace Brickred.Exchange.Compiler
                 ProtocolDescriptor.StructDef.FieldDef fieldDef =
                     structDef.Fields[i];
 
-                if (fieldDef.IsOptional) {
-                    string indent = "    ";
-                    string mask = string.Format("0x{0:x2}",
-                        1 << fieldDef.OptionalFieldIndex % 8);
-
-                    string cppType = GetCppType(fieldDef);
-                    if (fieldDef.Type == FieldType.String ||
-                        fieldDef.Type == FieldType.Bytes ||
-                        fieldDef.Type == FieldType.List ||
-                        fieldDef.Type == FieldType.Struct) {
-                        cppType = string.Format("const {0} &", cppType);
-                    } else {
-                        cppType = string.Format("{0} ", cppType);
-                    }
-
-                    sb.AppendFormat(
-                        "{0}bool has_{2}() const {{ " +
-                        "return _has_bits_[{3}] & {4}; }}{1}" +
-                        "{0}void set_has_{2}() {{ " +
-                        "_has_bits_[{3}] |= {4}; }}{1}" +
-                        "{0}void clear_has_{2}() {{ " +
-                        "_has_bits_[{3}] &= ~{4}; }}{1}" +
-                        "{0}void set_{2}({5}value) {{ " +
-                        "set_has_{2}(); this->{2} = value; }}{1}" +
-                        "{1}",
-                        indent, this.newLineStr, fieldDef.Name,
-                        fieldDef.OptionalFieldIndex / 8, mask, cppType);
+                if (fieldDef.IsOptional == false) {
+                    continue;
                 }
+
+                string indent = "    ";
+                string mask = string.Format("0x{0:x2}",
+                    1 << fieldDef.OptionalFieldIndex % 8);
+
+                string cppType = GetCppType(fieldDef);
+                if (fieldDef.Type == FieldType.String ||
+                    fieldDef.Type == FieldType.Bytes ||
+                    fieldDef.Type == FieldType.List ||
+                    fieldDef.Type == FieldType.Struct) {
+                    cppType = string.Format("const {0} &", cppType);
+                } else {
+                    cppType = string.Format("{0} ", cppType);
+                }
+
+                sb.AppendFormat(
+                    "{0}bool has_{1}() const {{ " +
+                    "return _has_bits_[{3}] & {4}; }}{2}" +
+                    "{0}void set_has_{1}() {{ " +
+                    "_has_bits_[{3}] |= {4}; }}{2}" +
+                    "{0}void clear_has_{1}() {{ " +
+                    "_has_bits_[{3}] &= ~{4}; }}{2}" +
+                    "{0}void set_{1}({5}value) {{ " +
+                    "set_has_{1}(); this->{1} = value; }}{2}" +
+                    "{2}",
+                    indent, fieldDef.Name, this.newLineStr,
+                    fieldDef.OptionalFieldIndex / 8, mask, cppType);
             }
 
             if (sb.Length > 0) {

@@ -197,6 +197,7 @@
         size_t length;                              \
         READ_LENGTH(length);                        \
         _var.clear();                               \
+        _var.reserve(length);                       \
         for (size_t i = 0; i < length; ++i) {       \
             _list_cpp_type v;                       \
             _read_func(v);                          \
@@ -209,6 +210,7 @@
         size_t length;                        \
         READ_LENGTH(length);                  \
         _var.clear();                         \
+        _var.reserve(length);                 \
         for (size_t i = 0; i < length; ++i) { \
             _enum_type v;                     \
             READ_ENUM(v, _enum_type);         \

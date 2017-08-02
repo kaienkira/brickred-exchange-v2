@@ -91,9 +91,9 @@ namespace Brickred.Exchange.Compiler
                 String,
                 Bytes,
                 Bool,
-                List,
                 Enum,
                 Struct,
+                List,
             }
 
             public sealed class FieldDef
