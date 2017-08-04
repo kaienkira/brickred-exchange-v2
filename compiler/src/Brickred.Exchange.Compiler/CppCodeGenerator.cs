@@ -121,13 +121,11 @@ namespace Brickred.Exchange.Compiler
             sb.Append(namespaceDeclStart);
             if (declList.Count > 0) {
                 sb.Append(this.newLineStr);
-            }
-            sb.Append(string.Join(this.newLineStr, declList));
-            if (declList.Count > 0) {
+                sb.Append(string.Join(this.newLineStr, declList));
                 sb.Append(this.newLineStr);
             }
-            sb.Append(namespaceDeclEnd);
             if (namespaceDeclEnd != "") {
+                sb.Append(namespaceDeclEnd);
                 sb.Append(this.newLineStr);
             }
             sb.Append(includeGuardEnd);
@@ -199,7 +197,8 @@ namespace Brickred.Exchange.Compiler
             ProtocolDescriptor.NamespaceDef namespaceDef = null;
 
             if (protoDef.Namespaces.TryGetValue(
-                    "cpp", out namespaceDef) == false) {
+                    "cpp", out namespaceDef) == false ||
+                namespaceDef.NamespaceParts.Count == 0) {
                 return enumDef.Name;
             } else {
                 return string.Join("::", namespaceDef.NamespaceParts) +
@@ -214,7 +213,8 @@ namespace Brickred.Exchange.Compiler
             ProtocolDescriptor.NamespaceDef namespaceDef = null;
 
             if (protoDef.Namespaces.TryGetValue(
-                    "cpp", out namespaceDef) == false) {
+                    "cpp", out namespaceDef) == false ||
+                namespaceDef.NamespaceParts.Count == 0) {
                 return structDef.Name;
             } else {
                 return string.Join("::", namespaceDef.NamespaceParts) +
@@ -230,7 +230,8 @@ namespace Brickred.Exchange.Compiler
             ProtocolDescriptor.NamespaceDef namespaceDef = null;
 
             if (protoDef.Namespaces.TryGetValue(
-                    "cpp", out namespaceDef) == false) {
+                    "cpp", out namespaceDef) == false ||
+                namespaceDef.NamespaceParts.Count == 0) {
                 return enumDef.Name + "::" + itemDef.Name;
             } else {
                 return string.Join("::", namespaceDef.NamespaceParts) +
@@ -959,6 +960,11 @@ namespace Brickred.Exchange.Compiler
                             "    {0}({1})", fieldDef.Name,
                             GetEnumItemFullQualifiedName(
                                 fieldDef.RefEnumDef.Items[0])));
+                    } else {
+                        initListImpl.Add(string.Format(
+                            "    {0}(({1})0)", fieldDef.Name,
+                            GetEnumFullQualifiedName(
+                                fieldDef.RefEnumDef)));
                     }
                 }
             }

@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
-using System.Text.RegularExpressions;
 
 namespace Brickred.Exchange.Compiler
 {
@@ -124,7 +123,8 @@ namespace Brickred.Exchange.Compiler
             ProtocolDescriptor.NamespaceDef namespaceDef = null;
 
             if (protoDef.Namespaces.TryGetValue(
-                    "csharp", out namespaceDef) == false) {
+                    "csharp", out namespaceDef) == false ||
+                namespaceDef.NamespaceParts.Count == 0) {
                 return enumDef.Name;
             } else {
                 return string.Join(".", namespaceDef.NamespaceParts) +
@@ -139,7 +139,8 @@ namespace Brickred.Exchange.Compiler
             ProtocolDescriptor.NamespaceDef namespaceDef = null;
 
             if (protoDef.Namespaces.TryGetValue(
-                    "csharp", out namespaceDef) == false) {
+                    "csharp", out namespaceDef) == false ||
+                namespaceDef.NamespaceParts.Count == 0) {
                 return structDef.Name;
             } else {
                 return string.Join(".", namespaceDef.NamespaceParts) +
@@ -155,7 +156,8 @@ namespace Brickred.Exchange.Compiler
             ProtocolDescriptor.NamespaceDef namespaceDef = null;
 
             if (protoDef.Namespaces.TryGetValue(
-                    "csharp", out namespaceDef) == false) {
+                    "csharp", out namespaceDef) == false ||
+                namespaceDef.NamespaceParts.Count == 0) {
                 return enumDef.Name + "." + itemDef.Name;
             } else {
                 return string.Join(".", namespaceDef.NamespaceParts) +
@@ -410,8 +412,8 @@ namespace Brickred.Exchange.Compiler
                 structDef, indent, out optionalFuncDecl);
 
             sb.Append(start);
-            sb.Append(fieldDecl);
             if (fieldDecl != "") {
+                sb.Append(fieldDecl);
                 sb.Append(this.newLineStr);
             }
             sb.Append(createFuncDecl);
