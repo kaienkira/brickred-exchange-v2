@@ -5,7 +5,7 @@ Brickred Studio data serialization tool
 
 Build Compiler
 --------------
-Compiler is written in c#, your should install mono first
+Compiler is written in c#
 ```
 cd compiler
 make
