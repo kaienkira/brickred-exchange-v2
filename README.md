@@ -66,7 +66,7 @@ Protocol File Quick Example
 <namespace lang="csharp">Protocol.Client</namespace>
 
 <import>attr.xml</import>
-  
+
 <struct name="MsgTest">
   <required name="a1" type="i8"/>
   <required name="a2" type="u8"/>
@@ -80,6 +80,12 @@ Protocol File Quick Example
   <required name="a10" type="bool"/>
   <required name="a11" type="attr.AttrType"/>
   <required name="a12" type="bytes"/>
+  <required name="a13" type="i16v"/>
+  <required name="a14" type="u16v"/>
+  <required name="a15" type="i32v"/>
+  <required name="a16" type="u32v"/>
+  <required name="a17" type="i64v"/>
+  <required name="a18" type="u64v"/>
   <required name="b1" type="list{i8}"/>
   <required name="b2" type="list{u8}"/>
   <required name="b3" type="list{i16}"/>
@@ -92,6 +98,12 @@ Protocol File Quick Example
   <required name="b10" type="list{bool}"/>
   <required name="b11" type="list{attr.AttrType}"/>
   <required name="b12" type="list{bytes}"/>
+  <required name="b13" type="list{i16v}"/>
+  <required name="b14" type="list{u16v}"/>
+  <required name="b15" type="list{i32v}"/>
+  <required name="b16" type="list{u32v}"/>
+  <required name="b17" type="list{i64v}"/>
+  <required name="b18" type="list{u64v}"/>
   <optional name="c1" type="i32"/>
   <optional name="c2" type="i32"/>
   <optional name="c3" type="list{i32}"/>
