@@ -254,17 +254,23 @@ namespace Brickred.Exchange.Compiler
                 cppType = "int8_t";
             } else if (checkType == FieldType.U8) {
                 cppType = "uint8_t";
-            } else if (checkType == FieldType.I16) {
+            } else if (checkType == FieldType.I16 ||
+                       checkType == FieldType.I16V) {
                 cppType = "int16_t";
-            } else if (checkType == FieldType.U16) {
+            } else if (checkType == FieldType.U16 ||
+                       checkType == FieldType.U16V) {
                 cppType = "uint16_t";
-            } else if (checkType == FieldType.I32) {
+            } else if (checkType == FieldType.I32 ||
+                       checkType == FieldType.I32V) {
                 cppType = "int32_t";
-            } else if (checkType == FieldType.U32) {
+            } else if (checkType == FieldType.U32 ||
+                       checkType == FieldType.U32V) {
                 cppType = "uint32_t";
-            } else if (checkType == FieldType.I64) {
+            } else if (checkType == FieldType.I64 ||
+                       checkType == FieldType.I64V) {
                 cppType = "int64_t";
-            } else if (checkType == FieldType.U64) {
+            } else if (checkType == FieldType.U64 ||
+                       checkType == FieldType.U64V) {
                 cppType = "uint64_t";
             } else if (checkType == FieldType.String ||
                        checkType == FieldType.Bytes) {
@@ -385,7 +391,13 @@ namespace Brickred.Exchange.Compiler
                             checkType == FieldType.I32 ||
                             checkType == FieldType.U32 ||
                             checkType == FieldType.I64 ||
-                            checkType == FieldType.U64) {
+                            checkType == FieldType.U64 ||
+                            checkType == FieldType.I16V ||
+                            checkType == FieldType.U16V ||
+                            checkType == FieldType.I32V ||
+                            checkType == FieldType.U32V ||
+                            checkType == FieldType.I64V ||
+                            checkType == FieldType.U64V) {
                             useStdIntH = true;
                         } else if (checkType == FieldType.String ||
                                    checkType == FieldType.Bytes) {
@@ -948,7 +960,13 @@ namespace Brickred.Exchange.Compiler
                     fieldDef.Type == FieldType.I32 ||
                     fieldDef.Type == FieldType.U32 ||
                     fieldDef.Type == FieldType.I64 ||
-                    fieldDef.Type == FieldType.U64) {
+                    fieldDef.Type == FieldType.U64 ||
+                    fieldDef.Type == FieldType.I16V ||
+                    fieldDef.Type == FieldType.U16V ||
+                    fieldDef.Type == FieldType.I32V ||
+                    fieldDef.Type == FieldType.U32V ||
+                    fieldDef.Type == FieldType.I64V ||
+                    fieldDef.Type == FieldType.U64V) {
                     initListImpl.Add(string.Format(
                         "    {0}(0)", fieldDef.Name));
                 } else if (fieldDef.Type == FieldType.Bool) {
@@ -1185,6 +1203,39 @@ namespace Brickred.Exchange.Compiler
                         "{0}WRITE_INT64(this->{1});{2}",
                         indent, fieldDef.Name, this.newLineStr);
                 }
+            } else if (checkType == FieldType.I16V ||
+                       checkType == FieldType.U16V) {
+                if (isList) {
+                    sb.AppendFormat(
+                        "{0}WRITE_LIST(this->{1}, WRITE_INT16V);{2}",
+                        indent, fieldDef.Name, this.newLineStr);
+                } else {
+                    sb.AppendFormat(
+                        "{0}WRITE_INT16V(this->{1});{2}",
+                        indent, fieldDef.Name, this.newLineStr);
+                }
+            } else if (checkType == FieldType.I32V ||
+                       checkType == FieldType.U32V) {
+                if (isList) {
+                    sb.AppendFormat(
+                        "{0}WRITE_LIST(this->{1}, WRITE_INT32V);{2}",
+                        indent, fieldDef.Name, this.newLineStr);
+                } else {
+                    sb.AppendFormat(
+                        "{0}WRITE_INT32V(this->{1});{2}",
+                        indent, fieldDef.Name, this.newLineStr);
+                }
+            } else if (checkType == FieldType.I64V ||
+                       checkType == FieldType.U64V) {
+                if (isList) {
+                    sb.AppendFormat(
+                        "{0}WRITE_LIST(this->{1}, WRITE_INT64V);{2}",
+                        indent, fieldDef.Name, this.newLineStr);
+                } else {
+                    sb.AppendFormat(
+                        "{0}WRITE_INT64V(this->{1});{2}",
+                        indent, fieldDef.Name, this.newLineStr);
+                }
             } else if (checkType == FieldType.String ||
                        checkType == FieldType.Bytes) {
                 if (isList) {
@@ -1375,6 +1426,57 @@ namespace Brickred.Exchange.Compiler
                 } else {
                     sb.AppendFormat(
                         "{0}READ_INT64(this->{1});{2}",
+                        indent, fieldDef.Name, this.newLineStr);
+                }
+            } else if (checkType == FieldType.I16V ||
+                       checkType == FieldType.U16V) {
+                if (isList) {
+                    string cppType = "";
+                    if (checkType == FieldType.I16V) {
+                        cppType = "int16_t";
+                    } else if (checkType == FieldType.U16V) {
+                        cppType = "uint16_t";
+                    }
+                    sb.AppendFormat(
+                        "{0}READ_LIST(this->{1}, READ_INT16V, {2});{3}",
+                        indent, fieldDef.Name, cppType, this.newLineStr);
+                } else {
+                    sb.AppendFormat(
+                        "{0}READ_INT16V(this->{1});{2}",
+                        indent, fieldDef.Name, this.newLineStr);
+                }
+            } else if (checkType == FieldType.I32V ||
+                       checkType == FieldType.U32V) {
+                if (isList) {
+                    string cppType = "";
+                    if (checkType == FieldType.I32V) {
+                        cppType = "int32_t";
+                    } else if (checkType == FieldType.U32V) {
+                        cppType = "uint32_t";
+                    }
+                    sb.AppendFormat(
+                        "{0}READ_LIST(this->{1}, READ_INT32V, {2});{3}",
+                        indent, fieldDef.Name, cppType, this.newLineStr);
+                } else {
+                    sb.AppendFormat(
+                        "{0}READ_INT32V(this->{1});{2}",
+                        indent, fieldDef.Name, this.newLineStr);
+                }
+            } else if (checkType == FieldType.I64V ||
+                       checkType == FieldType.U64V) {
+                if (isList) {
+                    string cppType = "";
+                    if (checkType == FieldType.I64V) {
+                        cppType = "int64_t";
+                    } else if (checkType == FieldType.U64V) {
+                        cppType = "uint64_t";
+                    }
+                    sb.AppendFormat(
+                        "{0}READ_LIST(this->{1}, READ_INT64V, {2});{3}",
+                        indent, fieldDef.Name, cppType, this.newLineStr);
+                } else {
+                    sb.AppendFormat(
+                        "{0}READ_INT64V(this->{1});{2}",
                         indent, fieldDef.Name, this.newLineStr);
                 }
             } else if (checkType == FieldType.String ||

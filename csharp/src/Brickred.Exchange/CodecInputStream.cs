@@ -101,6 +101,42 @@ namespace Brickred.Exchange
             return val;
         }
 
+        public ushort ReadUInt16V()
+        {
+            byte val = ReadUInt8();
+            if (val < 255) {
+                return val;
+            } else {
+                return ReadUInt16();
+            }
+        }
+
+        public uint ReadUInt32V()
+        {
+            byte val = ReadUInt8();
+            if (val < 254) {
+                return val;
+            } else if (val == 254) {
+                return ReadUInt16();
+            } else {
+                return ReadUInt32();
+            }
+        }
+
+        public ulong ReadUInt64V()
+        {
+            byte val = ReadUInt8();
+            if (val < 253) {
+                return val;
+            } else if (val == 253) {
+                return ReadUInt16();
+            } else if (val == 254) {
+                return ReadUInt32();
+            } else {
+                return ReadUInt64();
+            }
+        }
+
         public sbyte ReadInt8()
         {
             return (sbyte)ReadUInt8();
@@ -121,6 +157,21 @@ namespace Brickred.Exchange
             return (long)ReadUInt64();
         }
 
+        public short ReadInt16V()
+        {
+            return (short)ReadUInt16V();
+        }
+
+        public int ReadInt32V()
+        {
+            return (int)ReadUInt32V();
+        }
+
+        public long ReadInt64V()
+        {
+            return (long)ReadUInt64V();
+        }
+
         public bool ReadBool()
         {
             return ReadUInt8() != 0;
@@ -128,14 +179,12 @@ namespace Brickred.Exchange
 
         public int ReadLength()
         {
-            byte val = ReadUInt8();
-            if (val < 254) {
-                return val;
-            } else if (val == 254) {
-                return ReadUInt16();
-            } else {
-                return ReadInt32();
+            int length = (int)ReadUInt32V();
+            if (length < 0) {
+                throw CodecException.BufferOutOfSpace();
             }
+
+            return length;
         }
 
         public string ReadString()

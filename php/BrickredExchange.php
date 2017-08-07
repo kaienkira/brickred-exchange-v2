@@ -69,6 +69,7 @@ abstract class Binary64
 
     public function fromString($str)
     {
+        $str = bcmod($str, '18446744073709551616');
         if (bccomp($str, '0') < 0) {
             $str = bcadd($str, '18446744073709551616');
         }
@@ -212,6 +213,42 @@ final class Codec
         return $var;
     }
 
+    public static function readUInt16V($s)
+    {
+        $var = self::readUInt8($s);
+        if ($var < 255) {
+            return $var;
+        } else {
+            return self::readUInt16($s);
+        }
+    }
+
+    public static function readUInt32V($s)
+    {
+        $var = self::readUInt8($s);
+        if ($var < 254) {
+            return $var;
+        } else if ($var === 254) {
+            return self::readUInt16($s);
+        } else {
+            return self::readUInt32($s);
+        }
+    }
+
+    public static function readUInt64V($s)
+    {
+        $var = self::readUInt8($s);
+        if ($var < 253) {
+            return new UInt64($var);
+        } else if ($var === 253) {
+            return new UInt64(self::readUInt16($s));
+        } else if ($var === 254) {
+            return new UInt64(self::readUInt32($s));
+        } else {
+            return self::readUInt64($s);
+        }
+    }
+
     public static function readInt8($s)
     {
         $var = self::readUInt8($s);
@@ -250,6 +287,40 @@ final class Codec
         return $var;
     }
 
+    public static function readInt16V($s)
+    {
+        $var = self::readUInt16V($s);
+        if ($var > 32767) {
+            $var -= 65536;
+        }
+
+        return $var;
+    }
+
+    public static function readInt32V($s)
+    {
+        $var = self::readUInt32V($s);
+        if ($var > 2147483647) {
+            $var -= 4294967296;
+        }
+
+        return (int)$var;
+    }
+
+    public static function readInt64V($s)
+    {
+        $var = self::readUInt8($s);
+        if ($var < 253) {
+            return new Int64($var);
+        } else if ($var === 253) {
+            return new Int64(self::readInt16($s));
+        } else if ($var === 254) {
+            return new Int64(self::readInt32($s));
+        } else {
+            return self::readInt64($s);
+        }
+    }
+
     public static function readBool($s)
     {
         $var = self::readUInt8($s);
@@ -262,14 +333,7 @@ final class Codec
 
     public static function readLength($s)
     {
-        $var = self::readUInt8($s);
-        if ($var < 254) {
-            return $var;
-        } else if ($var === 254) {
-            return self::readUInt16($s);
-        } else {
-            return self::readUInt32($s);
-        }
+        return self::readUInt32V($s);
     }
 
     public static function readString($s)
@@ -339,8 +403,21 @@ final class Codec
         return $var->encode();
     }
 
-    public static function writeLength($var)
+    public static function writeInt16V($var)
     {
+        $var = $var & 0xffff;
+
+        if ($var < 255) {
+            return self::writeInt8($var);
+        } else {
+            return self::writeInt8(255).self::writeInt16($var);
+        }
+    }
+
+    public static function writeInt32V($var)
+    {
+        $var = $var & 0xffffffff;
+
         if ($var < 254) {
             return self::writeInt8($var);
         } else if ($var <= 65535) {
@@ -348,6 +425,29 @@ final class Codec
         } else {
             return self::writeInt8(255).self::writeInt32($var);
         }
+    }
+
+    public static function writeInt64V($var)
+    {
+        $v = $var->toString();
+        if (bccomp($v, '0') < 0) {
+            $str = bcadd($v, '18446744073709551616');
+        }
+
+        if (bccomp($v, '253') < 0) {
+            return self::writeInt8((int)$v);
+        } else if (bccomp($v, '65535') <= 0) {
+            return self::writeInt8(253).self::writeInt16((int)$v);
+        } else if (bccomp($v, '4294967295') <= 0) {
+            return self::writeInt8(254).self::writeInt32((int)$v);
+        } else {
+            return self::writeInt8(255).self::writeInt64($var);
+        }
+    }
+
+    public static function writeLength($var)
+    {
+        return self::writeInt32V($var);
     }
 
     public static function writeString($var)

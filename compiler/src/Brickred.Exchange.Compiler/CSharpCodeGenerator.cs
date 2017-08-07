@@ -180,17 +180,23 @@ namespace Brickred.Exchange.Compiler
                 csharpType = "sbyte";
             } else if (checkType == FieldType.U8) {
                 csharpType = "byte";
-            } else if (checkType == FieldType.I16) {
+            } else if (checkType == FieldType.I16 ||
+                       checkType == FieldType.I16V) {
                 csharpType = "short";
-            } else if (checkType == FieldType.U16) {
+            } else if (checkType == FieldType.U16 ||
+                       checkType == FieldType.U16V) {
                 csharpType = "ushort";
-            } else if (checkType == FieldType.I32) {
+            } else if (checkType == FieldType.I32 ||
+                       checkType == FieldType.I32V) {
                 csharpType = "int";
-            } else if (checkType == FieldType.U32) {
+            } else if (checkType == FieldType.U32 ||
+                       checkType == FieldType.U32V) {
                 csharpType = "uint";
-            } else if (checkType == FieldType.I64) {
+            } else if (checkType == FieldType.I64 ||
+                       checkType == FieldType.I64V) {
                 csharpType = "long";
-            } else if (checkType == FieldType.U64) {
+            } else if (checkType == FieldType.U64 ||
+                       checkType == FieldType.U64V) {
                 csharpType = "ulong";
             } else if (checkType == FieldType.String) {
                 csharpType = "string";
@@ -226,7 +232,13 @@ namespace Brickred.Exchange.Compiler
                 checkType == FieldType.I32 ||
                 checkType == FieldType.U32 ||
                 checkType == FieldType.I64 ||
-                checkType == FieldType.U64) {
+                checkType == FieldType.U64 ||
+                checkType == FieldType.I16V ||
+                checkType == FieldType.U16V ||
+                checkType == FieldType.I32V ||
+                checkType == FieldType.U32V ||
+                checkType == FieldType.I64V ||
+                checkType == FieldType.U64V) {
                 defaultValue = "0";
             } else if (checkType == FieldType.String) {
                 defaultValue = "\"\"";
@@ -523,6 +535,12 @@ namespace Brickred.Exchange.Compiler
                     checkType == FieldType.U32 ||
                     checkType == FieldType.I64 ||
                     checkType == FieldType.U64 ||
+                    checkType == FieldType.I16V ||
+                    checkType == FieldType.U16V ||
+                    checkType == FieldType.I32V ||
+                    checkType == FieldType.U32V ||
+                    checkType == FieldType.I64V ||
+                    checkType == FieldType.U64V ||
                     checkType == FieldType.String ||
                     checkType == FieldType.Bool ||
                     checkType == FieldType.Enum) {
@@ -548,6 +566,12 @@ namespace Brickred.Exchange.Compiler
                         fieldDef.ListType == FieldType.U32 ||
                         fieldDef.ListType == FieldType.I64 ||
                         fieldDef.ListType == FieldType.U64 ||
+                        fieldDef.ListType == FieldType.I16V ||
+                        fieldDef.ListType == FieldType.U16V ||
+                        fieldDef.ListType == FieldType.I32V ||
+                        fieldDef.ListType == FieldType.U32V ||
+                        fieldDef.ListType == FieldType.I64V ||
+                        fieldDef.ListType == FieldType.U64V ||
                         fieldDef.ListType == FieldType.String ||
                         fieldDef.ListType == FieldType.Bool ||
                         fieldDef.ListType == FieldType.Enum) {
@@ -765,6 +789,84 @@ namespace Brickred.Exchange.Compiler
                         "{0}s.WriteUInt64(this.{1});{2}",
                         indent, fieldDef.Name, this.newLineStr);
                 }
+            } else if (checkType == FieldType.I16V) {
+                if (isList) {
+                    sb.AppendFormat(
+                        "{0}s.WriteLength(this.{1}.Count);{2}" +
+                        "{0}for (int i = 0; i < this.{1}.Count; ++i) {{{2}" +
+                        "{0}    s.WriteInt16V(this.{1}[i]);{2}" +
+                        "{0}}}{2}",
+                        indent, fieldDef.Name, this.newLineStr);
+                } else {
+                    sb.AppendFormat(
+                        "{0}s.WriteInt16V(this.{1});{2}",
+                        indent, fieldDef.Name, this.newLineStr);
+                }
+            } else if (checkType == FieldType.U16V) {
+                if (isList) {
+                    sb.AppendFormat(
+                        "{0}s.WriteLength(this.{1}.Count);{2}" +
+                        "{0}for (int i = 0; i < this.{1}.Count; ++i) {{{2}" +
+                        "{0}    s.WriteUInt16V(this.{1}[i]);{2}" +
+                        "{0}}}{2}",
+                        indent, fieldDef.Name, this.newLineStr);
+                } else {
+                    sb.AppendFormat(
+                        "{0}s.WriteUInt16V(this.{1});{2}",
+                        indent, fieldDef.Name, this.newLineStr);
+                }
+            } else if (checkType == FieldType.I32V) {
+                if (isList) {
+                    sb.AppendFormat(
+                        "{0}s.WriteLength(this.{1}.Count);{2}" +
+                        "{0}for (int i = 0; i < this.{1}.Count; ++i) {{{2}" +
+                        "{0}    s.WriteInt32V(this.{1}[i]);{2}" +
+                        "{0}}}{2}",
+                        indent, fieldDef.Name, this.newLineStr);
+                } else {
+                    sb.AppendFormat(
+                        "{0}s.WriteInt32V(this.{1});{2}",
+                        indent, fieldDef.Name, this.newLineStr);
+                }
+            } else if (checkType == FieldType.U32V) {
+                if (isList) {
+                    sb.AppendFormat(
+                        "{0}s.WriteLength(this.{1}.Count);{2}" +
+                        "{0}for (int i = 0; i < this.{1}.Count; ++i) {{{2}" +
+                        "{0}    s.WriteUInt32V(this.{1}[i]);{2}" +
+                        "{0}}}{2}",
+                        indent, fieldDef.Name, this.newLineStr);
+                } else {
+                    sb.AppendFormat(
+                        "{0}s.WriteUInt32V(this.{1});{2}",
+                        indent, fieldDef.Name, this.newLineStr);
+                }
+            } else if (checkType == FieldType.I64V) {
+                if (isList) {
+                    sb.AppendFormat(
+                        "{0}s.WriteLength(this.{1}.Count);{2}" +
+                        "{0}for (int i = 0; i < this.{1}.Count; ++i) {{{2}" +
+                        "{0}    s.WriteInt64V(this.{1}[i]);{2}" +
+                        "{0}}}{2}",
+                        indent, fieldDef.Name, this.newLineStr);
+                } else {
+                    sb.AppendFormat(
+                        "{0}s.WriteInt64V(this.{1});{2}",
+                        indent, fieldDef.Name, this.newLineStr);
+                }
+            } else if (checkType == FieldType.U64V) {
+                if (isList) {
+                    sb.AppendFormat(
+                        "{0}s.WriteLength(this.{1}.Count);{2}" +
+                        "{0}for (int i = 0; i < this.{1}.Count; ++i) {{{2}" +
+                        "{0}    s.WriteUInt64V(this.{1}[i]);{2}" +
+                        "{0}}}{2}",
+                        indent, fieldDef.Name, this.newLineStr);
+                } else {
+                    sb.AppendFormat(
+                        "{0}s.WriteUInt64V(this.{1});{2}",
+                        indent, fieldDef.Name, this.newLineStr);
+                }
             } else if (checkType == FieldType.String) {
                 if (isList) {
                     sb.AppendFormat(
@@ -809,12 +911,12 @@ namespace Brickred.Exchange.Compiler
                     sb.AppendFormat(
                         "{0}s.WriteLength(this.{1}.Count);{2}" +
                         "{0}for (int i = 0; i < this.{1}.Count; ++i) {{{2}" +
-                        "{0}    s.WriteInt32((int)this.{1}[i]);{2}" +
+                        "{0}    s.WriteInt32V((int)this.{1}[i]);{2}" +
                         "{0}}}{2}",
                         indent, fieldDef.Name, this.newLineStr);
                 } else {
                     sb.AppendFormat(
-                        "{0}s.WriteInt32((int)this.{1});{2}",
+                        "{0}s.WriteInt32V((int)this.{1});{2}",
                         indent, fieldDef.Name, this.newLineStr);
                 }
             } else if (checkType == FieldType.Struct) {
@@ -1025,6 +1127,90 @@ namespace Brickred.Exchange.Compiler
                         "{0}this.{1} = s.ReadUInt64();{2}",
                         indent, fieldDef.Name, this.newLineStr);
                 }
+            } else if (checkType == FieldType.I16V) {
+                if (isList) {
+                    sb.AppendFormat(
+                        "{0}int length = s.ReadLength();{1}" +
+                        "{0}this.{2}.Clear();{1}" +
+                        "{0}for (int i = 0; i < length; ++i) {{{1}" +
+                        "{0}    this.{2}.Add(s.ReadInt16V());{1}" +
+                        "{0}}}{1}",
+                        indent, this.newLineStr, fieldDef.Name);
+                } else {
+                    sb.AppendFormat(
+                        "{0}this.{1} = s.ReadInt16V();{2}",
+                        indent, fieldDef.Name, this.newLineStr);
+                }
+            } else if (checkType == FieldType.U16V) {
+                if (isList) {
+                    sb.AppendFormat(
+                        "{0}int length = s.ReadLength();{1}" +
+                        "{0}this.{2}.Clear();{1}" +
+                        "{0}for (int i = 0; i < length; ++i) {{{1}" +
+                        "{0}    this.{2}.Add(s.ReadUInt16V());{1}" +
+                        "{0}}}{1}",
+                        indent, this.newLineStr, fieldDef.Name);
+                } else {
+                    sb.AppendFormat(
+                        "{0}this.{1} = s.ReadUInt16V();{2}",
+                        indent, fieldDef.Name, this.newLineStr);
+                }
+            } else if (checkType == FieldType.I32V) {
+                if (isList) {
+                    sb.AppendFormat(
+                        "{0}int length = s.ReadLength();{1}" +
+                        "{0}this.{2}.Clear();{1}" +
+                        "{0}for (int i = 0; i < length; ++i) {{{1}" +
+                        "{0}    this.{2}.Add(s.ReadInt32V());{1}" +
+                        "{0}}}{1}",
+                        indent, this.newLineStr, fieldDef.Name);
+                } else {
+                    sb.AppendFormat(
+                        "{0}this.{1} = s.ReadInt32V();{2}",
+                        indent, fieldDef.Name, this.newLineStr);
+                }
+            } else if (checkType == FieldType.U32V) {
+                if (isList) {
+                    sb.AppendFormat(
+                        "{0}int length = s.ReadLength();{1}" +
+                        "{0}this.{2}.Clear();{1}" +
+                        "{0}for (int i = 0; i < length; ++i) {{{1}" +
+                        "{0}    this.{2}.Add(s.ReadUInt32V());{1}" +
+                        "{0}}}{1}",
+                        indent, this.newLineStr, fieldDef.Name);
+                } else {
+                    sb.AppendFormat(
+                        "{0}this.{1} = s.ReadUInt32V();{2}",
+                        indent, fieldDef.Name, this.newLineStr);
+                }
+            } else if (checkType == FieldType.I64V) {
+                if (isList) {
+                    sb.AppendFormat(
+                        "{0}int length = s.ReadLength();{1}" +
+                        "{0}this.{2}.Clear();{1}" +
+                        "{0}for (int i = 0; i < length; ++i) {{{1}" +
+                        "{0}    this.{2}.Add(s.ReadInt64V());{1}" +
+                        "{0}}}{1}",
+                        indent, this.newLineStr, fieldDef.Name);
+                } else {
+                    sb.AppendFormat(
+                        "{0}this.{1} = s.ReadInt64V();{2}",
+                        indent, fieldDef.Name, this.newLineStr);
+                }
+            } else if (checkType == FieldType.U64V) {
+                if (isList) {
+                    sb.AppendFormat(
+                        "{0}int length = s.ReadLength();{1}" +
+                        "{0}this.{2}.Clear();{1}" +
+                        "{0}for (int i = 0; i < length; ++i) {{{1}" +
+                        "{0}    this.{2}.Add(s.ReadUInt64V());{1}" +
+                        "{0}}}{1}",
+                        indent, this.newLineStr, fieldDef.Name);
+                } else {
+                    sb.AppendFormat(
+                        "{0}this.{1} = s.ReadUInt64V();{2}",
+                        indent, fieldDef.Name, this.newLineStr);
+                }
             } else if (checkType == FieldType.String) {
                 if (isList) {
                     sb.AppendFormat(
@@ -1073,13 +1259,13 @@ namespace Brickred.Exchange.Compiler
                         "{0}int length = s.ReadLength();{1}" +
                         "{0}this.{2}.Clear();{1}" +
                         "{0}for (int i = 0; i < length; ++i) {{{1}" +
-                        "{0}    this.{2}.Add(({3})s.ReadInt32());{1}" +
+                        "{0}    this.{2}.Add(({3})s.ReadInt32V());{1}" +
                         "{0}}}{1}",
                         indent, this.newLineStr, fieldDef.Name,
                         GetEnumFullQualifiedName(fieldDef.RefEnumDef));
                 } else {
                     sb.AppendFormat(
-                        "{0}this.{1} = ({2})s.ReadInt32();{3}",
+                        "{0}this.{1} = ({2})s.ReadInt32V();{3}",
                         indent, fieldDef.Name,
                         GetEnumFullQualifiedName(fieldDef.RefEnumDef),
                         this.newLineStr);

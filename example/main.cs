@@ -27,6 +27,12 @@ public class App
             msg.a10 = true;
             msg.a11 = AttrType.STR;
             msg.a12 = Encoding.ASCII.GetBytes("hello, world!");
+            msg.a13 = 0x7fff;
+            msg.a14 = 0xffff;
+            msg.a15 = 0x7fffffff;
+            msg.a16 = 0xffffffff;
+            msg.a17 = 0x7fffffffffffffff;
+            msg.a18 = 0xffffffffffffffff;
 
             for (int i = 0; i < 254; ++i) {
                 msg.b5.Add(i);
@@ -37,6 +43,17 @@ public class App
             for (int i = 0; i < 10; ++i) {
                 msg.b8.Add(msg.a8);
             }
+
+            for (int i = 0; i < 254; ++i) {
+                msg.b15.Add(i);
+            }
+            for (int i = 0; i < 10; ++i) {
+                msg.b17.Add(msg.a17);
+            }
+            for (int i = 0; i < 10; ++i) {
+                msg.b18.Add(msg.a18);
+            }
+
             msg.set_c1(1);
             msg.set_c2(1);
             msg.clear_has_c1();
@@ -76,6 +93,12 @@ public class App
             s.AppendFormat("a10 = {0}\n", msg.a10 ? 1 : 0);
             s.AppendFormat("a11 = {0}\n", (int)msg.a11);
             s.AppendFormat("a12 = {0}\n", Encoding.ASCII.GetString(msg.a12));
+            s.AppendFormat("a13 = {0}\n", msg.a13);
+            s.AppendFormat("a14 = {0}\n", msg.a14);
+            s.AppendFormat("a15 = {0}\n", msg.a15);
+            s.AppendFormat("a16 = {0}\n", msg.a16);
+            s.AppendFormat("a17 = {0}\n", msg.a17);
+            s.AppendFormat("a18 = {0}\n", msg.a18);
             s.AppendFormat("b5 size = {0}\n", msg.b5.Count);
             s.AppendFormat("b5[253] = {0}\n", msg.b5[253]);
             s.AppendFormat("b7 size = {0}\n", msg.b7.Count);

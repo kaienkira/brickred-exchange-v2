@@ -24,6 +24,12 @@ $msg->a9 = 'hello, world!';
 $msg->a10 = true;
 $msg->a11 = AttrType::STR;
 $msg->a12 = 'hello, world!';
+$msg->a13 = 0x7fff;
+$msg->a14 = 0xffff;
+$msg->a15 = 0x7fffffff;
+$msg->a16 = 0xffffffff;
+$msg->a17->reset(0x7fffffff, 0xffffffff);
+$msg->a18->reset(0xffffffff, 0xffffffff);
 
 for ($i = 0; $i < 254; ++$i) {
     array_push($msg->b5, $i);
@@ -33,6 +39,16 @@ for ($i = 0; $i < 10; ++$i) {
 }
 for ($i = 0; $i < 10; ++$i) {
     array_push($msg->b8, clone $msg->a8);
+}
+
+for ($i = 0; $i < 254; ++$i) {
+    array_push($msg->b15, $i);
+}
+for ($i = 0; $i < 10; ++$i) {
+    array_push($msg->b17, clone $msg->a17);
+}
+for ($i = 0; $i < 10; ++$i) {
+    array_push($msg->b18, clone $msg->a18);
 }
 
 $msg->set_c1(1);

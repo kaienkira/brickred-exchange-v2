@@ -665,6 +665,18 @@ namespace Brickred.Exchange.Compiler
                 fieldType = ProtocolDescriptor.StructDef.FieldType.I64;
             } else if (fieldTypeStr == "u64") {
                 fieldType = ProtocolDescriptor.StructDef.FieldType.U64;
+            } else if (fieldTypeStr == "i16v") {
+                fieldType = ProtocolDescriptor.StructDef.FieldType.I16V;
+            } else if (fieldTypeStr == "u16v") {
+                fieldType = ProtocolDescriptor.StructDef.FieldType.U16V;
+            } else if (fieldTypeStr == "i32v") {
+                fieldType = ProtocolDescriptor.StructDef.FieldType.I32V;
+            } else if (fieldTypeStr == "u32v") {
+                fieldType = ProtocolDescriptor.StructDef.FieldType.U32V;
+            } else if (fieldTypeStr == "i64v") {
+                fieldType = ProtocolDescriptor.StructDef.FieldType.I64V;
+            } else if (fieldTypeStr == "u64v") {
+                fieldType = ProtocolDescriptor.StructDef.FieldType.U64V;
             } else if (fieldTypeStr == "string") {
                 fieldType = ProtocolDescriptor.StructDef.FieldType.String;
             } else if (fieldTypeStr == "bytes") {

@@ -28,6 +28,12 @@ int main()
         msg.a10 = true;
         msg.a11 = AttrType::STR;
         msg.a12 = "hello, world!";
+        msg.a13 = 0x7fff;
+        msg.a14 = 0xffff;
+        msg.a15 = 0x7fffffff;
+        msg.a16 = 0xffffffff;
+        msg.a17 = 0x7fffffffffffffff;
+        msg.a18 = 0xffffffffffffffff;
 
         for (int i = 0; i < 254; ++i) {
             msg.b5.push_back(i);
@@ -37,6 +43,16 @@ int main()
         }
         for (int i = 0; i < 10; ++i) {
             msg.b8.push_back(msg.a8);
+        }
+
+        for (int i = 0; i < 254; ++i) {
+            msg.b15.push_back(i);
+        }
+        for (int i = 0; i < 10; ++i) {
+            msg.b17.push_back(msg.a17);
+        }
+        for (int i = 0; i < 10; ++i) {
+            msg.b18.push_back(msg.a18);
         }
 
         msg.set_c1(1);
@@ -79,6 +95,12 @@ int main()
                   << "a10 = " << msg->a10 << std::endl
                   << "a11 = " << msg->a11 << std::endl
                   << "a12 = " << msg->a12 << std::endl
+                  << "a13 = " << msg->a13 << std::endl
+                  << "a14 = " << msg->a14 << std::endl
+                  << "a15 = " << msg->a15 << std::endl
+                  << "a16 = " << msg->a16 << std::endl
+                  << "a17 = " << msg->a17 << std::endl
+                  << "a18 = " << msg->a18 << std::endl
                   << "b5 size = " << msg->b5.size() << std::endl
                   << "b5[253] = " << msg->b5[253] << std::endl
                   << "b7 size = " << msg->b7.size() << std::endl

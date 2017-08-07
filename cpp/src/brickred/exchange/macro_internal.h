@@ -12,7 +12,7 @@
         _var = *(const uint8_t *)p; \
         p += 1;                     \
         left_bytes -= 1;            \
-    } while(0)                      \
+    } while (0)                     \
 
 #define WRITE_INT8(_var)               \
     do {                               \
@@ -22,7 +22,7 @@
         *(uint8_t *)p = (uint8_t)_var; \
         p += 1;                        \
         left_bytes -=1;                \
-    } while(0)                         \
+    } while (0)                        \
 
 #define READ_INT16(_var)                               \
     do {                                               \
@@ -33,7 +33,7 @@
                (uint16_t)(*(const uint8_t *)(p)) << 8; \
         p += 2;                                        \
         left_bytes -= 2;                               \
-    } while(0)                                         \
+    } while (0)                                        \
 
 #define WRITE_INT16(_var)                       \
     do {                                        \
@@ -44,7 +44,7 @@
         *(uint8_t *)(p + 1) = (uint8_t)(_var);  \
         p += 2;                                 \
         left_bytes -= 2;                        \
-    } while(0)                                  \
+    } while (0)                                 \
 
 #define READ_INT32(_var)                                     \
     do {                                                     \
@@ -57,7 +57,7 @@
                (uint32_t)(*(const uint8_t *)(p)) << 24;      \
         p += 4;                                              \
         left_bytes -= 4;                                     \
-    } while(0)                                               \
+    } while (0)                                              \
 
 #define WRITE_INT32(_var)                            \
     do {                                             \
@@ -70,7 +70,7 @@
         *(uint8_t *)(p + 3) = (uint8_t)(_var);       \
         p += 4;                                      \
         left_bytes -= 4;                             \
-    } while(0)                                       \
+    } while (0)                                      \
 
 #define READ_INT64(_var)                                     \
     do {                                                     \
@@ -87,7 +87,7 @@
                (uint64_t)(*(const uint8_t *)(p)) << 56;      \
         p += 8;                                              \
         left_bytes -= 8;                                     \
-    } while(0)                                               \
+    } while (0)                                              \
 
 #define WRITE_INT64(_var)                            \
     do {                                             \
@@ -104,23 +104,91 @@
         *(uint8_t *)(p + 7) = (uint8_t)(_var);       \
         p += 8;                                      \
         left_bytes -= 8;                             \
-    } while(0)                                       \
+    } while (0)                                      \
 
-#define READ_ENUM(_var, _enum_type)                       \
-    do {                                                  \
-        if (left_bytes < 4) {                             \
-            return -1;                                    \
-        }                                                 \
-        _var = (_enum_type)(                              \
-            (uint32_t)(*(const uint8_t *)(p + 3)) |       \
-            (uint32_t)(*(const uint8_t *)(p + 2)) << 8 |  \
-            (uint32_t)(*(const uint8_t *)(p + 1)) << 16 | \
-            (uint32_t)(*(const uint8_t *)(p)) << 24);     \
-        p += 4;                                           \
-        left_bytes -= 4;                                  \
-    } while(0)                                            \
+#define READ_INT16V(_var)           \
+    do {                            \
+        READ_INT8(_var);            \
+        if ((uint16_t)_var < 255) { \
+            break;                  \
+        } else {                    \
+            READ_INT16(_var);       \
+        }                           \
+    } while (0)                     \
 
-#define WRITE_ENUM(_var) WRITE_INT32(_var)
+#define WRITE_INT16V(_var)          \
+    do {                            \
+        if ((uint16_t)_var < 255) { \
+            WRITE_INT8(_var);       \
+        } else {                    \
+            WRITE_INT8(255);        \
+            WRITE_INT16(_var);      \
+        }                           \
+    } while (0)                     \
+
+#define READ_INT32V(_var)                   \
+    do {                                    \
+        READ_INT8(_var);                    \
+        if ((uint32_t)_var < 254) {         \
+            break;                          \
+        } else if ((uint32_t)_var == 254) { \
+            READ_INT16(_var);               \
+        } else {                            \
+            READ_INT32(_var);               \
+        }                                   \
+    } while (0)                             \
+
+#define WRITE_INT32V(_var)                     \
+    do {                                       \
+        if ((uint32_t)_var < 254) {            \
+            WRITE_INT8(_var);                  \
+        } else if ((uint32_t)_var <= 0xffff) { \
+            WRITE_INT8(254);                   \
+            WRITE_INT16(_var);                 \
+        } else {                               \
+            WRITE_INT8(255);                   \
+            WRITE_INT32(_var);                 \
+        }                                      \
+    } while (0)                                \
+
+#define READ_INT64V(_var)                   \
+    do {                                    \
+        READ_INT8(_var);                    \
+        if ((uint64_t)_var < 253) {         \
+            break;                          \
+        } else if ((uint64_t)_var == 253) { \
+            READ_INT16(_var);               \
+        } else if ((uint64_t)_var == 254) { \
+            READ_INT32(_var);               \
+        } else {                            \
+            READ_INT64(_var);               \
+        }                                   \
+    } while (0)                             \
+
+#define WRITE_INT64V(_var)                         \
+    do {                                           \
+        if ((uint64_t)_var < 253) {                \
+            WRITE_INT8(_var);                      \
+        } else if ((uint64_t)_var <= 0xffff) {     \
+            WRITE_INT8(253);                       \
+            WRITE_INT16(_var);                     \
+        } else if ((uint64_t)_var <= 0xffffffff) { \
+            WRITE_INT8(254);                       \
+            WRITE_INT32(_var);                     \
+        } else {                                   \
+            WRITE_INT8(255);                       \
+            WRITE_INT64(_var);                     \
+        }                                          \
+    } while (0)                                    \
+
+#define READ_ENUM(_var, _enum_type) \
+    do {                            \
+        int32_t v;                  \
+        READ_INT32V(v);             \
+        _var = (_enum_type)v;       \
+    } while (0)                     \
+
+#define WRITE_ENUM(_var) WRITE_INT32V(_var)
 
 #define READ_LENGTH(_length)         \
     do {                             \
@@ -132,7 +200,7 @@
         } else {                     \
             READ_INT32(_length);     \
         }                            \
-    } while(0)                       \
+    } while (0)                      \
 
 #define WRITE_LENGTH(_length)               \
     do {                                    \
@@ -147,7 +215,7 @@
         } else {                            \
             return -1;                      \
         }                                   \
-    } while(0)                              \
+    } while (0)                             \
 
 #define READ_STRING(_var)          \
     do {                           \
@@ -159,7 +227,7 @@
         _var.assign(p, length);    \
         p += length;               \
         left_bytes -= length;      \
-    } while(0)                     \
+    } while (0)                    \
 
 #define WRITE_STRING(_var)                      \
     do {                                        \
@@ -170,7 +238,7 @@
         ::memcpy(p, _var.c_str(), _var.size()); \
         p += _var.size();                       \
         left_bytes -= _var.size();              \
-    } while(0)                                  \
+    } while (0)                                 \
 
 #define READ_STRUCT(_var)                             \
     do {                                              \
@@ -180,7 +248,7 @@
         }                                             \
         p += struct_size;                             \
         left_bytes -= struct_size;                    \
-    } while(0)                                        \
+    } while (0)                                       \
 
 #define WRITE_STRUCT(_var)                            \
     do {                                              \
@@ -190,7 +258,7 @@
         }                                             \
         p += struct_size;                             \
         left_bytes -= struct_size;                    \
-    } while(0)                                        \
+    } while (0)                                       \
 
 #define READ_LIST(_var, _read_func, _list_cpp_type) \
     do {                                            \
@@ -203,7 +271,7 @@
             _read_func(v);                          \
             _var.push_back(v);                      \
         }                                           \
-    } while(0)                                      \
+    } while (0)                                     \
 
 #define READ_ENUM_LIST(_var, _enum_type)      \
     do {                                      \
@@ -216,7 +284,7 @@
             READ_ENUM(v, _enum_type);         \
             _var.push_back(v);                \
         }                                     \
-    } while(0)                                \
+    } while (0)                               \
 
 #define WRITE_LIST(_var, _write_func)              \
     do {                                           \
@@ -224,6 +292,6 @@
         for (size_t i = 0; i < _var.size(); ++i) { \
             _write_func(_var[i]);                  \
         }                                          \
-    } while(0)                                     \
+    } while (0)                                    \
 
 #endif

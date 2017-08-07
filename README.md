@@ -187,7 +187,7 @@ $ g++ -c message_test.cc
 $ g++ -c message_type.cc
 $ g++ main.cc attr.o message_test.o message_type.o -lbrickredexchange
 $ ./a.out
-encode_size = 263406
+encode_size = 263880
 a1 = 127
 a2 = 255
 a3 = 32767
@@ -200,6 +200,12 @@ a9 = hello, world!
 a10 = 1
 a11 = 0
 a12 = hello, world!
+a13 = 32767
+a14 = 65535
+a15 = 2147483647
+a16 = 4294967295
+a17 = 9223372036854775807
+a18 = 18446744073709551615
 b5 size = 254
 b5[253] = 253
 b7 size = 10

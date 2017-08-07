@@ -197,11 +197,17 @@ namespace Brickred.Exchange.Compiler
                 checkType == FieldType.I16 ||
                 checkType == FieldType.U16 ||
                 checkType == FieldType.I32 ||
-                checkType == FieldType.U32) {
+                checkType == FieldType.U32 ||
+                checkType == FieldType.I16V ||
+                checkType == FieldType.U16V ||
+                checkType == FieldType.I32V ||
+                checkType == FieldType.U32V) {
                 defaultValue = "0";
-            } else if (checkType == FieldType.I64) {
+            } else if (checkType == FieldType.I64 ||
+                       checkType == FieldType.I64V) {
                 defaultValue = "new Int64()";
-            } else if (checkType == FieldType.U64) {
+            } else if (checkType == FieldType.U64 ||
+                       checkType == FieldType.U64V) {
                 defaultValue = "new UInt64()";
             } else if (checkType == FieldType.String ||
                        checkType == FieldType.Bytes) {
@@ -568,8 +574,7 @@ namespace Brickred.Exchange.Compiler
                         indent, fieldDef.Name, this.newLineStr);
                 }
             } else if (checkType == FieldType.I32 ||
-                       checkType == FieldType.U32 ||
-                       checkType == FieldType.Enum) {
+                       checkType == FieldType.U32) {
                 if (isList) {
                     sb.AppendFormat(
                         "{0}$output .= Codec::writeList(" +
@@ -590,6 +595,43 @@ namespace Brickred.Exchange.Compiler
                 } else {
                     sb.AppendFormat(
                         "{0}$output .= Codec::writeInt64($this->{1});{2}",
+                        indent, fieldDef.Name, this.newLineStr);
+                }
+            } else if (checkType == FieldType.I16V ||
+                       checkType == FieldType.U16V) {
+                if (isList) {
+                    sb.AppendFormat(
+                        "{0}$output .= Codec::writeList(" +
+                        "$this->{1}, 'writeInt16V');{2}",
+                        indent, fieldDef.Name, this.newLineStr);
+                } else {
+                    sb.AppendFormat(
+                        "{0}$output .= Codec::writeInt16V($this->{1});{2}",
+                        indent, fieldDef.Name, this.newLineStr);
+                }
+            } else if (checkType == FieldType.I32V ||
+                       checkType == FieldType.U32V ||
+                       checkType == FieldType.Enum) {
+                if (isList) {
+                    sb.AppendFormat(
+                        "{0}$output .= Codec::writeList(" +
+                        "$this->{1}, 'writeInt32V');{2}",
+                        indent, fieldDef.Name, this.newLineStr);
+                } else {
+                    sb.AppendFormat(
+                        "{0}$output .= Codec::writeInt32V($this->{1});{2}",
+                        indent, fieldDef.Name, this.newLineStr);
+                }
+            } else if (checkType == FieldType.I64V ||
+                       checkType == FieldType.U64V) {
+                if (isList) {
+                    sb.AppendFormat(
+                        "{0}$output .= Codec::writeList(" +
+                        "$this->{1}, 'writeInt64V');{2}",
+                        indent, fieldDef.Name, this.newLineStr);
+                } else {
+                    sb.AppendFormat(
+                        "{0}$output .= Codec::writeInt64V($this->{1});{2}",
                         indent, fieldDef.Name, this.newLineStr);
                 }
             } else if (checkType == FieldType.String ||
@@ -738,8 +780,7 @@ namespace Brickred.Exchange.Compiler
                         "{0}$this->{1} = Codec::readUInt16($s);{2}",
                         indent, fieldDef.Name, this.newLineStr);
                 }
-            } else if (checkType == FieldType.I32 ||
-                       checkType == FieldType.Enum) {
+            } else if (checkType == FieldType.I32) {
                 if (isList) {
                     sb.AppendFormat(
                         "{0}$this->{1} = Codec::readList($s, 'readInt32');{2}",
@@ -777,6 +818,67 @@ namespace Brickred.Exchange.Compiler
                 } else {
                     sb.AppendFormat(
                         "{0}$this->{1} = Codec::readUInt64($s);{2}",
+                        indent, fieldDef.Name, this.newLineStr);
+                }
+            } else if (checkType == FieldType.I16V) {
+                if (isList) {
+                    sb.AppendFormat(
+                        "{0}$this->{1} = Codec::readList($s, 'readInt16V');{2}",
+                        indent, fieldDef.Name, this.newLineStr);
+                } else {
+                    sb.AppendFormat(
+                        "{0}$this->{1} = Codec::readInt16V($s);{2}",
+                        indent, fieldDef.Name, this.newLineStr);
+                }
+            } else if (checkType == FieldType.U16V) {
+                if (isList) {
+                    sb.AppendFormat(
+                        "{0}$this->{1} = Codec::readList($s, 'readUInt16V');{2}",
+                        indent, fieldDef.Name, this.newLineStr);
+                } else {
+                    sb.AppendFormat(
+                        "{0}$this->{1} = Codec::readUInt16V($s);{2}",
+                        indent, fieldDef.Name, this.newLineStr);
+                }
+            } else if (checkType == FieldType.I32V ||
+                       checkType == FieldType.Enum) {
+                if (isList) {
+                    sb.AppendFormat(
+                        "{0}$this->{1} = Codec::readList($s, 'readInt32V');{2}",
+                        indent, fieldDef.Name, this.newLineStr);
+                } else {
+                    sb.AppendFormat(
+                        "{0}$this->{1} = Codec::readInt32V($s);{2}",
+                        indent, fieldDef.Name, this.newLineStr);
+                }
+            } else if (checkType == FieldType.U32V) {
+                if (isList) {
+                    sb.AppendFormat(
+                        "{0}$this->{1} = Codec::readList($s, 'readUInt32V');{2}",
+                        indent, fieldDef.Name, this.newLineStr);
+                } else {
+                    sb.AppendFormat(
+                        "{0}$this->{1} = Codec::readUInt32V($s);{2}",
+                        indent, fieldDef.Name, this.newLineStr);
+                }
+            } else if (checkType == FieldType.I64V) {
+                if (isList) {
+                    sb.AppendFormat(
+                        "{0}$this->{1} = Codec::readList($s, 'readInt64V');{2}",
+                        indent, fieldDef.Name, this.newLineStr);
+                } else {
+                    sb.AppendFormat(
+                        "{0}$this->{1} = Codec::readInt64V($s);{2}",
+                        indent, fieldDef.Name, this.newLineStr);
+                }
+            } else if (checkType == FieldType.U64V) {
+                if (isList) {
+                    sb.AppendFormat(
+                        "{0}$this->{1} = Codec::readList($s, 'readUInt64V');{2}",
+                        indent, fieldDef.Name, this.newLineStr);
+                } else {
+                    sb.AppendFormat(
+                        "{0}$this->{1} = Codec::readUInt64V($s);{2}",
                         indent, fieldDef.Name, this.newLineStr);
                 }
             } else if (checkType == FieldType.String ||
@@ -902,6 +1004,10 @@ namespace Brickred.Exchange.Compiler
                 checkType == FieldType.U16 ||
                 checkType == FieldType.I32 ||
                 checkType == FieldType.U32 ||
+                checkType == FieldType.I16V ||
+                checkType == FieldType.U16V ||
+                checkType == FieldType.I32V ||
+                checkType == FieldType.U32V ||
                 checkType == FieldType.String ||
                 checkType == FieldType.Bytes ||
                 checkType == FieldType.Bool ||
@@ -910,7 +1016,9 @@ namespace Brickred.Exchange.Compiler
                     "{0}$output['{1}'] = $this->{1};{2}",
                     indent, fieldDef.Name, this.newLineStr);
             } else if (checkType == FieldType.I64 ||
-                       checkType == FieldType.U64) {
+                       checkType == FieldType.U64 ||
+                       checkType == FieldType.I64V ||
+                       checkType == FieldType.U64V) {
                 if (isList) {
                     sb.AppendFormat(
                         "{0}$output['{1}'] = array();{2}" +
@@ -1019,6 +1127,10 @@ namespace Brickred.Exchange.Compiler
                 checkType == FieldType.U16 ||
                 checkType == FieldType.I32 ||
                 checkType == FieldType.U32 ||
+                checkType == FieldType.I16V ||
+                checkType == FieldType.U16V ||
+                checkType == FieldType.I32V ||
+                checkType == FieldType.U32V ||
                 checkType == FieldType.Enum) {
                 if (isList) {
                     sb.AppendFormat(
@@ -1031,7 +1143,8 @@ namespace Brickred.Exchange.Compiler
                         "$array, '{1}');{2}",
                         indent, fieldDef.Name, this.newLineStr);
                 }
-            } else if (checkType == FieldType.I64) {
+            } else if (checkType == FieldType.I64 ||
+                       checkType == FieldType.I64V) {
                 if (isList) {
                     sb.AppendFormat(
                         "{0}$this->{1} = Codec::readListFromArray(" +
@@ -1043,7 +1156,8 @@ namespace Brickred.Exchange.Compiler
                         "$array, '{1}');{2}",
                         indent, fieldDef.Name, this.newLineStr);
                 }
-            } else if (checkType == FieldType.U64) {
+            } else if (checkType == FieldType.U64 ||
+                       checkType == FieldType.U64V) {
                 if (isList) {
                     sb.AppendFormat(
                         "{0}$this->{1} = Codec::readListFromArray(" +

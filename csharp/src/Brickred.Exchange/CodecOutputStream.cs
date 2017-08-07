@@ -94,6 +94,45 @@ namespace Brickred.Exchange
             buffer_left_size_ -= 8;
         }
 
+        public void WriteUInt16V(ushort val)
+        {
+            if (val < 255) {
+                WriteUInt8((byte)val);
+            } else {
+                WriteUInt8(255);
+                WriteUInt16(val);
+            }
+        }
+
+        public void WriteUInt32V(uint val)
+        {
+            if (val < 254) {
+                WriteUInt8((byte)val);
+            } else if (val <= 0xffff) {
+                WriteUInt8(254);
+                WriteUInt16((ushort)val);
+            } else {
+                WriteUInt8(255);
+                WriteUInt32(val);
+            }
+        }
+
+        public void WriteUInt64V(ulong val)
+        {
+            if (val < 253) {
+                WriteUInt8((byte)val);
+            } else if (val <= 0xffff) {
+                WriteUInt8(253);
+                WriteUInt16((ushort)val);
+            } else if (val <= 0xffffffff) {
+                WriteUInt8(254);
+                WriteUInt32((uint)val);
+            } else {
+                WriteUInt8(255);
+                WriteUInt64(val);
+            }
+        }
+
         public void WriteInt8(sbyte val)
         {
             WriteUInt8((byte)val);
@@ -114,6 +153,21 @@ namespace Brickred.Exchange
             WriteUInt64((ulong)val);
         }
 
+        public void WriteInt16V(short val)
+        {
+            WriteUInt16V((ushort)val);
+        }
+
+        public void WriteInt32V(int val)
+        {
+            WriteUInt32V((uint)val);
+        }
+
+        public void WriteInt64V(long val)
+        {
+            WriteUInt64V((ulong)val);
+        }
+
         public void WriteBool(bool val)
         {
             WriteUInt8((byte)(val ? 1 : 0));
@@ -121,15 +175,7 @@ namespace Brickred.Exchange
 
         public void WriteLength(int val)
         {
-            if (val < 254) {
-                WriteUInt8((byte)val);
-            } else if (val <= 65535) {
-                WriteUInt8(254);
-                WriteUInt16((ushort)val);
-            } else {
-                WriteUInt8(255);
-                WriteInt32(val);
-            }
+            WriteUInt32V((uint)val);
         }
 
         public void WriteString(string val)
