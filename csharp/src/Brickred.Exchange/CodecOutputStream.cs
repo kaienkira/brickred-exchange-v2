@@ -1,7 +1,5 @@
-using Buffer = System.Buffer;
-using Encoding = System.Text.Encoding;
-using Math = System.Math;
-using SCG = System.Collections.Generic;
+using System;
+using System.Text;
 
 namespace Brickred.Exchange
 {

@@ -1,7 +1,5 @@
-using ArgumentException = System.ArgumentException;
-using DecoderFallbackException = System.Text.DecoderFallbackException;
-using EncoderFallbackException = System.Text.EncoderFallbackException;
-using Exception = System.Exception;
+using System;
+using System.Text;
 
 namespace Brickred.Exchange
 {
@@ -12,6 +10,7 @@ namespace Brickred.Exchange
         protected abstract BaseStruct CloneInternal();
         public abstract void EncodeToStream(CodecOutputStream s);
         public abstract void DecodeFromStream(CodecInputStream s);
+        public abstract string Dump();
 
         public BaseStruct Clone()
         {

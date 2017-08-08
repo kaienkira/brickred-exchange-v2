@@ -1,8 +1,7 @@
 using Brickred.Exchange;
 using Protocol.Client;
-using Console = System.Console;
-using Encoding = System.Text.Encoding;
-using StringBuilder = System.Text.StringBuilder;
+using System;
+using System.Text;
 
 public class App
 {

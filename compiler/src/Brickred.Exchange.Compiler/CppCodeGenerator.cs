@@ -626,7 +626,8 @@ namespace Brickred.Exchange.Compiler
                 "    virtual {0} *clone() const {{" +
                 " return new {0}(*this); }}{1}" +
                 "    virtual int encode(char *buffer, size_t size) const;{1}" +
-                "    virtual int decode(const char *buffer, size_t size);{1}",
+                "    virtual int decode(const char *buffer, size_t size);{1}" +
+                "    virtual std::string dump() const;{1}",
                 structDef.Name, this.newLineStr);
             string end = string.Format(
                 "}};{0}", this.newLineStr);
@@ -811,6 +812,7 @@ namespace Brickred.Exchange.Compiler
         {
             bool useCStringH = false;
             bool useAlgorithmH = false;
+            bool useSStreamH = false;
             bool useBrickredMacroInternalH = false;
 
             {
@@ -831,6 +833,7 @@ namespace Brickred.Exchange.Compiler
                     }
 
                     if (structDef.Fields.Count > 0) {
+                        useSStreamH = true;
                         useBrickredMacroInternalH = true;
                     }
 
@@ -857,6 +860,10 @@ namespace Brickred.Exchange.Compiler
                 }
                 if (useAlgorithmH) {
                     sb.AppendFormat("#include <algorithm>{0}",
+                        this.newLineStr);
+                }
+                if (useSStreamH) {
+                    sb.AppendFormat("#include <sstream>{0}",
                         this.newLineStr);
                 }
 
@@ -919,6 +926,7 @@ namespace Brickred.Exchange.Compiler
             string swapFuncImpl;
             string encodeFuncImpl;
             string decodeFuncImpl;
+            string dumpFuncImpl;
 
             GetSourceFileStructImplConstructor(
                 structDef, out constructorImpl);
@@ -930,6 +938,8 @@ namespace Brickred.Exchange.Compiler
                 structDef, out encodeFuncImpl);
             GetSourceFileStructImplDecodeFunc(
                 structDef, out decodeFuncImpl);
+            GetSourceFileStructImplDumpFunc(
+                structDef, out dumpFuncImpl);
 
             sb.Append(constructorImpl);
             sb.Append(this.newLineStr);
@@ -940,6 +950,8 @@ namespace Brickred.Exchange.Compiler
             sb.Append(encodeFuncImpl);
             sb.Append(this.newLineStr);
             sb.Append(decodeFuncImpl);
+            sb.Append(this.newLineStr);
+            sb.Append(dumpFuncImpl);
 
             output = sb.ToString();
         }
@@ -1536,6 +1548,167 @@ namespace Brickred.Exchange.Compiler
                 enumMapDef, out createFuncImpl);
 
             sb.Append(createFuncImpl);
+
+            output = sb.ToString();
+        }
+
+        private void GetSourceFileStructImplDumpFunc(
+            ProtocolDescriptor.StructDef structDef, out string output)
+        {
+            StringBuilder sb = new StringBuilder();
+
+            string start = string.Format(
+                "std::string {0}::dump() const{1}" +
+                "{{{1}",
+                structDef.Name, this.newLineStr);
+            string end = string.Format(
+                "}}{0}", this.newLineStr);
+            string indent = "    ";
+
+            sb.Append(start);
+
+            if (structDef.Fields.Count == 0) {
+                sb.AppendFormat(
+                    "{0}return \"\";{1}",
+                    indent, this.newLineStr);
+            } else {
+                sb.AppendFormat(
+                    "{0}std::stringstream ss;{1}" +
+                    "{1}",
+                    indent, this.newLineStr);
+
+                for (int i = 0; i < structDef.Fields.Count; ++i) {
+                    string writeStatement;
+                    GetSourceFileStructImplDumpFuncWriteStatement(
+                        structDef.Fields[i], out writeStatement);
+                    sb.Append(writeStatement);
+                }
+
+                sb.AppendFormat(
+                    "{1}" +
+                    "{0}std::string s = ss.str();{1}" +
+                    "{0}if (s.empty() == false) {{{1}" +
+                    "{0}    s.erase(s.end() - 1);{1}" +
+                    "{0}}}{1}" +
+                    "{1}" +
+                    "{0}return s;{1}",
+                    indent, this.newLineStr);
+            }
+
+            sb.Append(end);
+
+            output = sb.ToString();
+        }
+
+        private void GetSourceFileStructImplDumpFuncWriteStatement(
+            ProtocolDescriptor.StructDef.FieldDef fieldDef, out string output)
+        {
+            StringBuilder sb = new StringBuilder();
+
+            string indent = "    ";
+            string optionalCheckStart = "";
+            string optionalCheckEnd = "";
+
+            if (fieldDef.IsOptional) {
+                optionalCheckStart = string.Format(
+                    "{0}if (has_{1}()) {{{2}",
+                    indent, fieldDef.Name, this.newLineStr);
+                optionalCheckEnd = string.Format(
+                    "{0}}}{1}",
+                    indent, this.newLineStr);
+                indent += "    ";
+            }
+
+            sb.Append(optionalCheckStart);
+
+            FieldType checkType;
+            if (fieldDef.Type == FieldType.List) {
+                checkType = fieldDef.ListType;
+            } else {
+                checkType = fieldDef.Type;
+            }
+            bool isList = (fieldDef.Type == FieldType.List);
+
+            if (checkType == FieldType.I8 ||
+                checkType == FieldType.U8) {
+                if (isList) {
+                    sb.AppendFormat(
+                        "{0}for (size_t i = 0; i < this->{1}.size(); ++i) {{{2}" +
+                        "{0}    ss << \"{1}: \" << (int)this->{1}[i] << \" \";{2}" +
+                        "{0}}}{2}",
+                        indent, fieldDef.Name, this.newLineStr);
+                } else {
+                    sb.AppendFormat(
+                        "{0}ss << \"{1}: \" << (int)this->{1} << \" \";{2}",
+                        indent, fieldDef.Name, this.newLineStr);
+                }
+            } else if (checkType == FieldType.I16 ||
+                       checkType == FieldType.U16 ||
+                       checkType == FieldType.I32 ||
+                       checkType == FieldType.U32 ||
+                       checkType == FieldType.I64 ||
+                       checkType == FieldType.U64 ||
+                       checkType == FieldType.I16V ||
+                       checkType == FieldType.U16V ||
+                       checkType == FieldType.I32V ||
+                       checkType == FieldType.U32V ||
+                       checkType == FieldType.I64V ||
+                       checkType == FieldType.U64V ||
+                       checkType == FieldType.Bool ||
+                       checkType == FieldType.Enum) {
+                if (isList) {
+                    sb.AppendFormat(
+                        "{0}for (size_t i = 0; i < this->{1}.size(); ++i) {{{2}" +
+                        "{0}    ss << \"{1}: \" << this->{1}[i] << \" \";{2}" +
+                        "{0}}}{2}",
+                        indent, fieldDef.Name, this.newLineStr);
+                } else {
+                    sb.AppendFormat(
+                        "{0}ss << \"{1}: \" << this->{1} << \" \";{2}",
+                        indent, fieldDef.Name, this.newLineStr);
+                }
+            } else if (checkType == FieldType.String) {
+                if (isList) {
+                    sb.AppendFormat(
+                        "{0}for (size_t i = 0; i < this->{1}.size(); ++i) {{{2}" +
+                        "{0}    ss << \"{1}: \\\"\" << this->{1}[i] << \"\\\" \";{2}" +
+                        "{0}}}{2}",
+                        indent, fieldDef.Name, this.newLineStr);
+                } else {
+                    sb.AppendFormat(
+                        "{0}ss << \"{1}: \\\"\" << this->{1} << \"\\\" \";{2}",
+                        indent, fieldDef.Name, this.newLineStr);
+                }
+            } else if (checkType == FieldType.Bytes) {
+                if (isList) {
+                    sb.AppendFormat(
+                        "{0}for (size_t i = 0; i < this->{1}.size(); ++i) {{{2}" +
+                        "{0}    ss << \"{1}: \\\"\" << " +
+                        "dumpBytes(this->{1}[i]) << \"\\\" \";{2}" +
+                        "{0}}}{2}",
+                        indent, fieldDef.Name, this.newLineStr);
+                } else {
+                    sb.AppendFormat(
+                        "{0}ss << \"{1}: \\\"\" << " +
+                        "dumpBytes(this->{1}) << \"\\\" \";{2}",
+                        indent, fieldDef.Name, this.newLineStr);
+                }
+            } else if (checkType == FieldType.Struct) {
+                if (isList) {
+                    sb.AppendFormat(
+                        "{0}for (size_t i = 0; i < this->{1}.size(); ++i) {{{2}" +
+                        "{0}    ss << \"{1} {{ \" << " +
+                        "this->{1}[i].dump() << \" }} \";{2}" +
+                        "{0}}}{2}",
+                        indent, fieldDef.Name, this.newLineStr);
+                } else {
+                    sb.AppendFormat(
+                        "{0}ss << \"{1} {{ \" << this->{1}.dump() << \" }} \";{2}",
+                        indent, fieldDef.Name, this.newLineStr);
+                }
+            }
+
+            sb.Append(optionalCheckEnd);
 
             output = sb.ToString();
         }

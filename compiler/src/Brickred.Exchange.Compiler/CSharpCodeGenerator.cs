@@ -285,12 +285,18 @@ namespace Brickred.Exchange.Compiler
                     ProtocolDescriptor.StructDef structDef =
                         protoDef.Structs[i];
 
+                    if (structDef.Fields.Count > 0) {
+                        useSystemCollectionsGeneric = true;
+                    }
+
                     for (int j = 0; j < structDef.Fields.Count; ++j) {
                         ProtocolDescriptor.StructDef.FieldDef fieldDef =
                             structDef.Fields[j];
 
-                        if (fieldDef.Type == FieldType.List) {
-                            useSystemCollectionsGeneric = true;
+                        if (fieldDef.Type == FieldType.String ||
+                            fieldDef.ListType == FieldType.String) {
+                            // for BitConverter
+                            useSystem = true;
                         }
                     }
                 }
@@ -403,6 +409,7 @@ namespace Brickred.Exchange.Compiler
             string cloneFuncDecl;
             string encodeToStreamFuncDecl;
             string decodeFromStreamFuncDecl;
+            string dumpFuncDecl;
             string optionalFuncDecl;
 
             indent += "    ";
@@ -420,6 +427,8 @@ namespace Brickred.Exchange.Compiler
                 structDef, indent, out encodeToStreamFuncDecl);
             GetStructDeclDecodeFromStreamFunc(
                 structDef, indent, out decodeFromStreamFuncDecl);
+            GetStructDeclDumpFunc(
+                structDef, indent, out dumpFuncDecl);
             GetStructDeclOptionalFunc(
                 structDef, indent, out optionalFuncDecl);
 
@@ -439,6 +448,8 @@ namespace Brickred.Exchange.Compiler
             sb.Append(encodeToStreamFuncDecl);
             sb.Append(this.newLineStr);
             sb.Append(decodeFromStreamFuncDecl);
+            sb.Append(this.newLineStr);
+            sb.Append(dumpFuncDecl);
             if (optionalFuncDecl != "") {
                 sb.Append(this.newLineStr);
                 sb.Append(optionalFuncDecl);
@@ -1290,6 +1301,185 @@ namespace Brickred.Exchange.Compiler
             }
 
             sb.Append(end);
+
+            output = sb.ToString();
+        }
+
+        private void GetStructDeclDumpFunc(
+            ProtocolDescriptor.StructDef structDef,
+            string indent, out string output)
+        {
+            StringBuilder sb = new StringBuilder();
+
+            string start = string.Format(
+                "{0}public override string Dump(){1}" +
+                "{0}{{{1}",
+                indent, this.newLineStr);
+            string end = string.Format(
+                "{0}}}{1}",
+                indent, this.newLineStr);
+
+            sb.Append(start);
+
+            indent += "    ";
+
+            if (structDef.Fields.Count == 0) {
+                sb.AppendFormat(
+                    "{0}return \"\";{1}",
+                    indent, this.newLineStr);
+            } else {
+                sb.AppendFormat(
+                    "{0}List<string> sb = new List<string>();{1}" +
+                    "{1}",
+                    indent, this.newLineStr);
+
+                for (int i = 0; i < structDef.Fields.Count; ++i) {
+                    string writeStatement;
+                    GetStructDeclDumpFuncWriteStatement(
+                        structDef.Fields[i], indent, out writeStatement);
+                    sb.Append(writeStatement);
+                }
+
+                sb.AppendFormat(
+                    "{1}" +
+                    "{0}return string.Join(\" \", sb);{1}",
+                    indent, this.newLineStr);
+            }
+
+            sb.Append(end);
+
+            output = sb.ToString();
+        }
+
+        private void GetStructDeclDumpFuncWriteStatement(
+            ProtocolDescriptor.StructDef.FieldDef fieldDef,
+            string indent, out string output)
+        {
+            StringBuilder sb = new StringBuilder();
+
+            string optionalCheckStart = "";
+            string optionalCheckEnd = "";
+
+            if (fieldDef.IsOptional) {
+                optionalCheckStart = string.Format(
+                    "{0}if (has_{1}()) {{{2}",
+                    indent, fieldDef.Name, this.newLineStr);
+                optionalCheckEnd = string.Format(
+                    "{0}}}{1}",
+                    indent, this.newLineStr);
+                indent += "    ";
+            }
+
+            sb.Append(optionalCheckStart);
+
+            FieldType checkType;
+            if (fieldDef.Type == FieldType.List) {
+                checkType = fieldDef.ListType;
+            } else {
+                checkType = fieldDef.Type;
+            }
+            bool isList = (fieldDef.Type == FieldType.List);
+
+            if (checkType == FieldType.I8 ||
+                checkType == FieldType.U8 ||
+                checkType == FieldType.I16 ||
+                checkType == FieldType.U16 ||
+                checkType == FieldType.I32 ||
+                checkType == FieldType.U32 ||
+                checkType == FieldType.I64 ||
+                checkType == FieldType.U64 ||
+                checkType == FieldType.I16V ||
+                checkType == FieldType.U16V ||
+                checkType == FieldType.I32V ||
+                checkType == FieldType.U32V ||
+                checkType == FieldType.I64V ||
+                checkType == FieldType.U64V) {
+                if (isList) {
+                    sb.AppendFormat(
+                        "{0}for (int i = 0; i < this.{1}.Count; ++i) {{{2}" +
+                        "{0}    sb.Add(string.Format(" +
+                        "\"{1}: {{0}}\", this.{1}[i]));{2}" +
+                        "{0}}}{2}",
+                        indent, fieldDef.Name, this.newLineStr);
+                } else {
+                    sb.AppendFormat(
+                        "{0}sb.Add(string.Format(\"{1}: {{0}}\", this.{1}));{2}",
+                        indent, fieldDef.Name, this.newLineStr);
+                }
+            } else if (checkType == FieldType.Bool) {
+                if (isList) {
+                    sb.AppendFormat(
+                        "{0}for (int i = 0; i < this.{1}.Count; ++i) {{{2}" +
+                        "{0}    sb.Add(string.Format(" +
+                        "\"{1}: {{0}}\", this.{1}[i] ? 1 : 0));{2}" +
+                        "{0}}}{2}",
+                        indent, fieldDef.Name, this.newLineStr);
+                } else {
+                    sb.AppendFormat(
+                        "{0}sb.Add(string.Format(\"{1}: {{0}}\", " +
+                        "this.{1} ? 1 : 0));{2}",
+                        indent, fieldDef.Name, this.newLineStr);
+                }
+            } else if (checkType == FieldType.Enum) {
+                if (isList) {
+                    sb.AppendFormat(
+                        "{0}for (int i = 0; i < this.{1}.Count; ++i) {{{2}" +
+                        "{0}    sb.Add(string.Format(" +
+                        "\"{1}: {{0}}\", (int)this.{1}[i]));{2}" +
+                        "{0}}}{2}",
+                        indent, fieldDef.Name, this.newLineStr);
+                } else {
+                    sb.AppendFormat(
+                        "{0}sb.Add(string.Format(\"{1}: {{0}}\", " +
+                        "(int)this.{1}));{2}",
+                        indent, fieldDef.Name, this.newLineStr);
+                }
+            } else if (checkType == FieldType.String) {
+                if (isList) {
+                    sb.AppendFormat(
+                        "{0}for (int i = 0; i < this.{1}.Count; ++i) {{{2}" +
+                        "{0}    sb.Add(string.Format(" +
+                        "\"{1}: \\\"{{0}}\\\"\", this.{1}[i]));{2}" +
+                        "{0}}}{2}",
+                        indent, fieldDef.Name, this.newLineStr);
+                } else {
+                    sb.AppendFormat(
+                        "{0}sb.Add(string.Format(\"{1}: \\\"{{0}}\\\"\", " +
+                        "this.{1}));{2}",
+                        indent, fieldDef.Name, this.newLineStr);
+                }
+            } else if (checkType == FieldType.Bytes) {
+                if (isList) {
+                    sb.AppendFormat(
+                        "{0}for (int i = 0; i < this.{1}.Count; ++i) {{{2}" +
+                        "{0}    sb.Add(string.Format(" +
+                        "\"{1}: \\\"{{0}}\\\"\", " +
+                        "BitConverter.ToString(this.{1}[i])));{2}" +
+                        "{0}}}{2}",
+                        indent, fieldDef.Name, this.newLineStr);
+                } else {
+                    sb.AppendFormat(
+                        "{0}sb.Add(string.Format(\"{1}: \\\"{{0}}\\\"\", " +
+                        "BitConverter.ToString(this.{1})));{2}",
+                        indent, fieldDef.Name, this.newLineStr);
+                }
+            } else if (checkType == FieldType.Struct) {
+                if (isList) {
+                    sb.AppendFormat(
+                        "{0}for (int i = 0; i < this.{1}.Count; ++i) {{{2}" +
+                        "{0}    sb.Add(string.Format(" +
+                        "\"{1} {{{{ {{0}} }}}}\", this.{1}[i].Dump()));{2}" +
+                        "{0}}}{2}",
+                        indent, fieldDef.Name, this.newLineStr);
+                } else {
+                    sb.AppendFormat(
+                        "{0}sb.Add(string.Format(\"{1} {{{{ {{0}} }}}}\", " +
+                        "this.{1}.Dump()));{2}",
+                        indent, fieldDef.Name, this.newLineStr);
+                }
+            }
+
+            sb.Append(optionalCheckEnd);
 
             output = sb.ToString();
         }

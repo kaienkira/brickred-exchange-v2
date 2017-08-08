@@ -1,4 +1,4 @@
-using IOException = System.IO.IOException;
+using System.IO;
 
 namespace Brickred.Exchange
 {
