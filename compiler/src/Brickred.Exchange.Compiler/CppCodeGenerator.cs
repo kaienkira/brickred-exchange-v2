@@ -118,9 +118,11 @@ namespace Brickred.Exchange.Compiler
             sb.Append(includeFileDecl);
             sb.Append(this.newLineStr);
             sb.Append(classForwardDecl);
-            sb.Append(namespaceDeclStart);
-            if (declList.Count > 0) {
+            if (namespaceDeclStart != "") {
+                sb.Append(namespaceDeclStart);
                 sb.Append(this.newLineStr);
+            }
+            if (declList.Count > 0) {
                 sb.Append(string.Join(this.newLineStr, declList));
                 sb.Append(this.newLineStr);
             }
