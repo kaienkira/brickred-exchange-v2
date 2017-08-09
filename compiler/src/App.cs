@@ -12,7 +12,7 @@ public sealed class App
         Console.Error.WriteLine(string.Format(
             "usage: {0} " +
             "-f <protocol_file> " +
-            "-l <language> ",
+            "-l <language>",
             AppDomain.CurrentDomain.FriendlyName));
         Console.Error.WriteLine(
             "    [-o <output_dir>]");
