@@ -284,7 +284,7 @@ namespace Brickred.Exchange.Compiler
             }
             if (protoDef.Namespaces.ContainsKey(lang)) {
                 PrintLineError(protoDef, element,
-                    "namespace node `lang` attribute duplicated");
+                    "`namespace` node `lang` attribute duplicated");
                 return false;
             }
 
