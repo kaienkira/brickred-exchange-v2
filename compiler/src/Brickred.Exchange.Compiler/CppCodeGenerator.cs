@@ -642,12 +642,12 @@ namespace Brickred.Exchange.Compiler
             sb.Append(start);
             if (optionalFuncDecl != "") {
                 sb.Append(this.newLineStr);
+                sb.Append(optionalFuncDecl);
             }
-            sb.Append(optionalFuncDecl);
             if (fieldDecl != "") {
                 sb.Append(this.newLineStr);
+                sb.Append(fieldDecl);
             }
-            sb.Append(fieldDecl);
             sb.Append(end);
 
             output = sb.ToString();
