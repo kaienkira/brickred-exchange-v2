@@ -467,8 +467,8 @@ namespace Brickred.Exchange.Compiler
                 sb.Append(systemHeaderDecl);
                 if (customHeaderDecl != "") {
                     sb.Append(this.newLineStr);
+                    sb.Append(customHeaderDecl);
                 }
-                sb.Append(customHeaderDecl);
 
                 output = sb.ToString();
             }
