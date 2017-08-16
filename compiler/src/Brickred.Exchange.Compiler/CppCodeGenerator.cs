@@ -905,12 +905,12 @@ namespace Brickred.Exchange.Compiler
                     protoDef.Name, this.newLineStr);
                 if (systemHeaderDecl != "") {
                     sb.Append(this.newLineStr);
+                    sb.Append(systemHeaderDecl);
                 }
-                sb.Append(systemHeaderDecl);
                 if (customHeaderDecl != "") {
                     sb.Append(this.newLineStr);
+                    sb.Append(customHeaderDecl);
                 }
-                sb.Append(customHeaderDecl);
 
                 output = sb.ToString();
             }
