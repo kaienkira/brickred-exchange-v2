@@ -169,15 +169,17 @@ namespace Brickred.Exchange.Compiler
             sb.Append(dontEditComment);
             sb.Append(includeFileDecl);
             sb.Append(this.newLineStr);
-            sb.Append(namespaceDeclStart);
-            if (implList.Count > 0) {
+            if (namespaceDeclStart != "") {
+                sb.Append(namespaceDeclStart);
                 sb.Append(this.newLineStr);
             }
             sb.Append(string.Join(this.newLineStr, implList));
-            if (implList.Count > 0) {
-                sb.Append(this.newLineStr);
+            if (namespaceDeclEnd != "") {
+                if (implList.Count > 0) {
+                    sb.Append(this.newLineStr);
+                }
+                sb.Append(namespaceDeclEnd);
             }
-            sb.Append(namespaceDeclEnd);
 
             return sb.ToString();
         }
