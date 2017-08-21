@@ -8,7 +8,7 @@ src/Brickred.Exchange/CodecOutputStream.cs \
 .PHONY: build clean
 
 build:
-	mcs -t:library -out:$(TARGET) $(SRCS)
+	@mcs -t:library -out:$(TARGET) $(SRCS)
 
 clean:
-	rm -f $(TARGET)
+	@rm -f $(TARGET)
