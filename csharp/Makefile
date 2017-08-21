@@ -5,7 +5,9 @@ src/Brickred.Exchange/CodecException.cs \
 src/Brickred.Exchange/CodecInputStream.cs \
 src/Brickred.Exchange/CodecOutputStream.cs \
 
-debug:
+.PHONY: build clean
+
+build:
 	mcs -t:library -out:$(TARGET) $(SRCS)
 
 clean:
