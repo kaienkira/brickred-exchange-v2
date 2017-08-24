@@ -741,7 +741,7 @@ namespace Brickred.Exchange.Compiler
             string end = string.Format(
                 "    }};{0}" +
                 "{0}" +
-                "    template<class T>{0}" +
+                "    template <class T>{0}" +
                 "    struct id;{0}" +
                 "{0}" +
                 "    static brickred::exchange::BaseStruct *create(int id);{0}" +
@@ -797,7 +797,7 @@ namespace Brickred.Exchange.Compiler
                 }
 
                 sb.AppendFormat(
-                    "template<>{0}" +
+                    "template <>{0}" +
                     "struct {1}::id<{2}> {{{0}" +
                     "    static const int value = {3};{0}" +
                     "}};{0}",
