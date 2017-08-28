@@ -293,8 +293,8 @@ namespace Brickred.Exchange.Compiler
                         ProtocolDescriptor.StructDef.FieldDef fieldDef =
                             structDef.Fields[j];
 
-                        if (fieldDef.Type == FieldType.String ||
-                            fieldDef.ListType == FieldType.String) {
+                        if (fieldDef.Type == FieldType.Bytes ||
+                            fieldDef.ListType == FieldType.Bytes) {
                             // for BitConverter
                             useSystem = true;
                         }
@@ -1342,7 +1342,7 @@ namespace Brickred.Exchange.Compiler
 
                 sb.AppendFormat(
                     "{1}" +
-                    "{0}return string.Join(\" \", sb);{1}",
+                    "{0}return string.Join(\" \", sb.ToArray());{1}",
                     indent, this.newLineStr);
             }
 
