@@ -13,3 +13,6 @@ src/Brickred.Exchange.Compiler/ProtocolParser.cs \
 
 build:
 	@mcs -r:System.Xml.Linq $(SRC) -out:$(TARGET)
+
+clean:
+	@rm -f $(TARGET)
