@@ -580,7 +580,7 @@ namespace Brickred.Exchange.Compiler
 
             if (def.OptionalFieldCount > 0) {
                 def.OptionalByteCount =
-                    def.OptionalFieldCount / 8 + 1;
+                    (def.OptionalFieldCount - 1) / 8 + 1;
             }
 
             protoDef.Structs.Add(def);
