@@ -1,4 +1,4 @@
-.PHONY: build
+.PHONY: build clean
 
 TARGET = bin/brexc.exe
 SRC = \
