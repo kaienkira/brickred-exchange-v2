@@ -97,8 +97,10 @@ namespace Brickred.Exchange.Compiler
             StringBuilder sb = new StringBuilder();
             sb.Append(dontEditComment);
             sb.Append(this.newLineStr);
-            sb.Append(usingStatementsDecl);
-            sb.Append(this.newLineStr);
+            if (usingStatementsDecl != "") {
+                sb.Append(usingStatementsDecl);
+                sb.Append(this.newLineStr);
+            }
             sb.Append(namespaceDeclStart);
             sb.Append(string.Join(this.newLineStr, declList));
             sb.Append(namespaceDeclEnd);
