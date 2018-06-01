@@ -534,11 +534,11 @@ namespace Brickred.Exchange.Compiler
 
                 string namespaceDeclStart;
                 string namespaceDeclEnd;
-                GetNamespaceDecl(protoDef,
+                GetNamespaceDecl(refProtoDef,
                     out namespaceDeclStart, out namespaceDeclEnd);
 
                 sb.Append(namespaceDeclStart);
-                if (structs.Count > 0) {
+                if (namespaceDeclStart != "" && structs.Count > 0) {
                     sb.Append(this.newLineStr);
                 }
 
@@ -553,7 +553,7 @@ namespace Brickred.Exchange.Compiler
                         structDef.Name, this.newLineStr);
                 }
 
-                if (structs.Count > 0) {
+                if (namespaceDeclEnd != "" && structs.Count > 0) {
                     sb.Append(this.newLineStr);
                 }
                 sb.Append(namespaceDeclEnd);
