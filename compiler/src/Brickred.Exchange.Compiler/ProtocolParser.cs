@@ -430,7 +430,7 @@ namespace Brickred.Exchange.Compiler
                     def.IntValue =
                         enumDef.Items[enumDef.Items.Count - 1].IntValue + 1;
                 }
-            } else if (Regex.IsMatch(val, @"^[0-9]+$")) {
+            } else if (Regex.IsMatch(val, @"^(-)?[0-9]+$")) {
                 // int
                 def.Type = ProtocolDescriptor.EnumDef.ItemType.Int;
                 def.IntValue = int.TryParse(val, out def.IntValue)
