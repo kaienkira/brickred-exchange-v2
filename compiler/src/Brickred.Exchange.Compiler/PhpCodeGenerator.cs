@@ -271,9 +271,9 @@ namespace Brickred.Exchange.Compiler
                     } else if (fieldDef.Type == FieldType.U64) {
                         useBrickredExchangeUInt64 = true;
                     }
-
-                    useBrickredExchangeCodec = true;
                 }
+
+                useBrickredExchangeCodec = true;
             }
 
             StringBuilder sb = new StringBuilder();
