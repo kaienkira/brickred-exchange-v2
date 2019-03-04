@@ -1009,11 +1009,14 @@ namespace Brickred.Exchange.Compiler
                 checkType == FieldType.I32V ||
                 checkType == FieldType.U32V ||
                 checkType == FieldType.String ||
-                checkType == FieldType.Bytes ||
                 checkType == FieldType.Bool ||
                 checkType == FieldType.Enum) {
                 sb.AppendFormat(
                     "{0}$output['{1}'] = $this->{1};{2}",
+                    indent, fieldDef.Name, this.newLineStr);
+            } else if (checkType == FieldType.Bytes) {
+                sb.AppendFormat(
+                    "{0}$output['{1}'] = base64_encode($this->{1});{2}",
                     indent, fieldDef.Name, this.newLineStr);
             } else if (checkType == FieldType.I64 ||
                        checkType == FieldType.U64 ||
@@ -1169,8 +1172,7 @@ namespace Brickred.Exchange.Compiler
                         "$array, '{1}');{2}",
                         indent, fieldDef.Name, this.newLineStr);
                 }
-            } else if (checkType == FieldType.String ||
-                       checkType == FieldType.Bytes) {
+            } else if (checkType == FieldType.String) {
                 if (isList) {
                     sb.AppendFormat(
                         "{0}$this->{1} = Codec::readListFromArray(" +
@@ -1179,6 +1181,18 @@ namespace Brickred.Exchange.Compiler
                 } else {
                     sb.AppendFormat(
                         "{0}$this->{1} = Codec::readStringFromArray(" +
+                        "$array, '{1}');{2}",
+                        indent, fieldDef.Name, this.newLineStr);
+                }
+            } else if (checkType == FieldType.Bytes) {
+                if (isList) {
+                    sb.AppendFormat(
+                        "{0}$this->{1} = Codec::readListFromArray(" +
+                        "$array, '{1}', 'readBytesFromArray');{2}",
+                        indent, fieldDef.Name, this.newLineStr);
+                } else {
+                    sb.AppendFormat(
+                        "{0}$this->{1} = Codec::readBytesFromArray(" +
                         "$array, '{1}');{2}",
                         indent, fieldDef.Name, this.newLineStr);
                 }

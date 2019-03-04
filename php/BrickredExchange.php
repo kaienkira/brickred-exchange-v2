@@ -501,6 +501,15 @@ final class Codec
         return (string)$array[$index];
     }
 
+    public static function readBytesFromArray($array, $index)
+    {
+        if (!isset($array[$index])) {
+            throw new CodecException("array['$index'] not set");
+        }
+
+        return base64_decode($array[$index]);
+    }
+
     public static function readInt64FromArray($array, $index)
     {
         if (!isset($array[$index])) {
