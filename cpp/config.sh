@@ -9,6 +9,8 @@ usage()
 }
 
 brickred_install_prefix='/usr/local'
+brickred_compile_flag=
+brickred_link_flag=
 
 options=`getopt -o h -l \
 help,\
@@ -45,3 +47,5 @@ fi
 
 # output
 echo "BRICKRED_INSTALL_PREFIX = $brickred_install_prefix" >config.mak
+echo "BRICKRED_COMPILE_FLAG = $brickred_compile_flag" >>config.mak
+echo "BRICKRED_LINK_FLAG = $brickred_link_flag" >>config.mak
