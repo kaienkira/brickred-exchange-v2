@@ -415,13 +415,13 @@ namespace Brickred.Exchange.Compiler
             {
                 StringBuilder sb = new StringBuilder();
 
-                if (useStdIntH) {
-                    sb.AppendFormat("#include <stdint.h>{0}",
-                        this.newLineStr);
-                }
-
                 sb.AppendFormat("#include <cstddef>{0}",
                     this.newLineStr);
+
+                if (useStdIntH) {
+                    sb.AppendFormat("#include <cstdint>{0}",
+                        this.newLineStr);
+                }
 
                 if (useStringH) {
                     sb.AppendFormat("#include <string>{0}",
@@ -623,13 +623,11 @@ namespace Brickred.Exchange.Compiler
                 "    ~{0}();{1}" +
                 "    void swap({0} &other);{1}" +
                 "{1}" +
-                "    static brickred::exchange::BaseStruct *create() {{" +
-                " return new {0}(); }}{1}" +
-                "    virtual {0} *clone() const {{" +
-                " return new {0}(*this); }}{1}" +
-                "    virtual int encode(char *buffer, size_t size) const;{1}" +
-                "    virtual int decode(const char *buffer, size_t size);{1}" +
-                "    virtual std::string dump() const;{1}",
+                "    static brickred::exchange::BaseStruct *create() {{ return new {0}(); }}{1}" +
+                "    virtual {0} *clone() const {{ return new {0}(*this); }}{1}" +
+                "    virtual int encode(char *buffer, size_t size) const override;{1}" +
+                "    virtual int decode(const char *buffer, size_t size) override;{1}" +
+                "    virtual std::string dump() const override;{1}",
                 structDef.Name, this.newLineStr);
             string end = string.Format(
                 "}};{0}", this.newLineStr);
