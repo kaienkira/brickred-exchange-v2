@@ -1,7 +1,7 @@
 #ifndef BRICKRED_EXCHANGE_MACRO_INTERNAL_H
 #define BRICKRED_EXCHANGE_MACRO_INTERNAL_H
 
-#include <stdint.h>
+#include <cstdint>
 #include <cstring>
 
 #define READ_INT8(_var)             \
