@@ -1,7 +1,9 @@
 include config.mak
 
 TARGET = build/libbrickredexchange
-SRCS = src/brickred/exchange/base_struct.cc
+SRCS = \
+src/brickred/exchange/base_struct.cc \
+
 LINK_TYPE = static
 INCLUDE = -Isrc
 CPP_FLAG = $(BRICKRED_COMPILE_FLAG)
