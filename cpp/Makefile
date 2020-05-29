@@ -11,7 +11,8 @@ include mak/main.mak
 .PHONY: install
 
 install:
-	@mkdir -p $(BR_INSTALL_PREFIX)/include/brickred/exchange
-	@cp src/brickred/exchange/*.h $(BR_INSTALL_PREFIX)/include/brickred/exchange
-	@mkdir -p $(BR_INSTALL_PREFIX)/lib
-	@cp $(FINAL_TARGET) $(BR_INSTALL_PREFIX)/lib
+	@mkdir -p "$(BRICKRED_INSTALL_PREFIX)"/include/brickred/exchange
+	@cp src/brickred/exchange/*.h \
+		"$(BRICKRED_INSTALL_PREFIX)"/include/brickred/exchange
+	@mkdir -p "$(BRICKRED_INSTALL_PREFIX)"/lib
+	@cp "$(FINAL_TARGET)" "$(BRICKRED_INSTALL_PREFIX)"/lib

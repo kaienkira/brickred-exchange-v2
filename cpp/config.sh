@@ -8,13 +8,19 @@ usage()
     exit 1
 }
 
-opt_prefix='/usr/local'
+brickred_install_prefix='/usr/local'
+
+options=`getopt -o h -l \
+help,\
+prefix:\
+ -- "$@"`
+eval set -- "$options"
 
 while [ $# -gt 0 ]
 do
     case "$1" in
     -h|--help) usage;;
-    --prefix=*) opt_prefix=${1#*=}; shift;;
+    --prefix) brickred_install_prefix=$2; shift;;
     --) shift; break;;
     *) usage;;
     esac
@@ -38,4 +44,4 @@ then
 fi
 
 # output
-echo "BR_INSTALL_PREFIX = $opt_prefix" >config.mak
+echo "BRICKRED_INSTALL_PREFIX = $brickred_install_prefix" >config.mak
