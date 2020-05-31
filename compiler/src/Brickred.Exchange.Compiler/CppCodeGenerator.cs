@@ -309,20 +309,13 @@ namespace Brickred.Exchange.Compiler
                 return;
             }
 
-            StringBuilder sbStart = new StringBuilder();
-            StringBuilder sbEnd = new StringBuilder();
+            string namespaceName =
+                string.Join("::", namespaceDef.NamespaceParts);
 
-            for (int i = 0; i < namespaceDef.NamespaceParts.Count; ++i) {
-                string str = namespaceDef.NamespaceParts[i];
-
-                sbStart.AppendFormat("namespace {0} {{{1}",
-                    str, this.newLineStr);
-                sbEnd.AppendFormat("}} // namespace {0}{1}",
-                    str, this.newLineStr);
-            }
-
-            start = sbStart.ToString();
-            end = sbEnd.ToString();
+            start = string.Format("namespace {0} {{{1}",
+                namespaceName, this.newLineStr);
+            end = string.Format("}} // namespace {0}{1}",
+                namespaceName, this.newLineStr);
         }
 
         private void GetHeaderFileIncludeGuard(
@@ -624,10 +617,10 @@ namespace Brickred.Exchange.Compiler
                 "    void swap({0} &other);{1}" +
                 "{1}" +
                 "    static brickred::exchange::BaseStruct *create() {{ return new {0}(); }}{1}" +
-                "    virtual {0} *clone() const {{ return new {0}(*this); }}{1}" +
-                "    virtual int encode(char *buffer, size_t size) const override;{1}" +
-                "    virtual int decode(const char *buffer, size_t size) override;{1}" +
-                "    virtual std::string dump() const override;{1}",
+                "    {0} *clone() const override {{ return new {0}(*this); }}{1}" +
+                "    int encode(char *buffer, size_t size) const override;{1}" +
+                "    int decode(const char *buffer, size_t size) override;{1}" +
+                "    std::string dump() const override;{1}",
                 structDef.Name, this.newLineStr);
             string end = string.Format(
                 "}};{0}", this.newLineStr);
