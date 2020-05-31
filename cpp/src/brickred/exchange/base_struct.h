@@ -4,12 +4,11 @@
 #include <cstddef>
 #include <string>
 
-namespace brickred {
-namespace exchange {
+namespace brickred::exchange {
 
 class BaseStruct {
 public:
-    typedef BaseStruct *(*CreateFunc)();
+    using CreateFunc = BaseStruct *(*)();
 
     BaseStruct();
     virtual ~BaseStruct();
@@ -23,7 +22,6 @@ protected:
     static std::string dumpBytes(const std::string &val);
 };
 
-} // namespace exchange
-} // namespace brickred
+} // namespace brickred::exchange
 
 #endif

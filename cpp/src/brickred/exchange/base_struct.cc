@@ -3,8 +3,7 @@
 #include <cstdio>
 #include <vector>
 
-namespace brickred {
-namespace exchange {
+namespace brickred::exchange {
 
 BaseStruct::BaseStruct()
 {
@@ -30,5 +29,4 @@ std::string BaseStruct::dumpBytes(const std::string &val)
     return std::string(&ret[0]);
 }
 
-} // namespace exchange
-} // namespace brickred
+} // namespace brickred::exchange
