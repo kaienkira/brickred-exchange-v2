@@ -1746,7 +1746,7 @@ namespace Brickred.Exchange.Compiler
                 "{1}" +
                 "    const int *ret = std::lower_bound(begin, end, id);{1}" +
                 "    if (ret == end || *ret != id) {{{1}" +
-                "        return NULL;{1}" +
+                "        return nullptr;{1}" +
                 "    }} else {{{1}" +
                 "        return create_func_list[ret - begin]();{1}" +
                 "    }}{1}" +
