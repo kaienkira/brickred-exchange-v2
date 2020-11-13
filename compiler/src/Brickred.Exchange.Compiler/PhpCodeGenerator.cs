@@ -225,7 +225,7 @@ namespace Brickred.Exchange.Compiler
                 defaultValue = string.Format("new {0}()",
                     GetStructFullQualifiedName(fieldDef.RefStructDef));
             } else if (checkType == FieldType.List) {
-                defaultValue = "array()";
+                defaultValue = "[]";
             }
 
             return defaultValue;
@@ -442,7 +442,7 @@ namespace Brickred.Exchange.Compiler
 
             if (structDef.OptionalByteCount > 0) {
                 sb.AppendFormat(
-                    "{0}$this->_has_bits_ = array({1});{2}",
+                    "{0}$this->_has_bits_ = [{1}];{2}",
                     indent,
                     string.Join(", ", new int[structDef.OptionalByteCount]),
                     this.newLineStr);
@@ -943,11 +943,11 @@ namespace Brickred.Exchange.Compiler
 
             if (structDef.Fields.Count == 0) {
                 sb.AppendFormat(
-                    "{0}return array();{1}",
+                    "{0}return [];{1}",
                     indent, this.newLineStr);
             } else {
                 sb.AppendFormat(
-                    "{0}$output = array();{1}" +
+                    "{0}$output = [];{1}" +
                     "{1}",
                     indent, this.newLineStr);
 
@@ -1024,7 +1024,7 @@ namespace Brickred.Exchange.Compiler
                        checkType == FieldType.U64V) {
                 if (isList) {
                     sb.AppendFormat(
-                        "{0}$output['{1}'] = array();{2}" +
+                        "{0}$output['{1}'] = [];{2}" +
                         "{0}for ($i = 0; $i < count($this->{1}); ++$i) {{{2}" +
                         "{0}    $output['{1}'][$i] = $this->{1}[$i]->toString();{2}" +
                         "{0}}}{2}",
@@ -1037,7 +1037,7 @@ namespace Brickred.Exchange.Compiler
             } else if (checkType == FieldType.Struct) {
                 if (isList) {
                     sb.AppendFormat(
-                        "{0}$output['{1}'] = array();{2}" +
+                        "{0}$output['{1}'] = [];{2}" +
                         "{0}for ($i = 0; $i < count($this->{1}); ++$i) {{{2}" +
                         "{0}    $output['{1}'][$i] = $this->{1}[$i]->toArray();{2}" +
                         "{0}}}{2}",
@@ -1061,7 +1061,7 @@ namespace Brickred.Exchange.Compiler
             string indent = "    ";
 
             string start = string.Format(
-                "{0}public function fromArray($array){1}" +
+                "{0}public function fromArray($arr){1}" +
                 "{0}{{{1}",
                 indent, this.newLineStr);
             string end = string.Format(
@@ -1105,7 +1105,7 @@ namespace Brickred.Exchange.Compiler
 
             if (fieldDef.IsOptional) {
                 optionalCheckStart = string.Format(
-                    "{0}if (isset($array['{1}'])) {{{2}" +
+                    "{0}if (isset($arr['{1}'])) {{{2}" +
                     "{0}    $this->set_has_{1}();{2}",
                     indent, fieldDef.Name, this.newLineStr);
                 optionalCheckEnd = string.Format(
@@ -1138,12 +1138,12 @@ namespace Brickred.Exchange.Compiler
                 if (isList) {
                     sb.AppendFormat(
                         "{0}$this->{1} = Codec::readListFromArray(" +
-                        "$array, '{1}', 'readIntFromArray');{2}",
+                        "$arr, '{1}', 'readIntFromArray');{2}",
                         indent, fieldDef.Name, this.newLineStr);
                 } else {
                     sb.AppendFormat(
                         "{0}$this->{1} = Codec::readIntFromArray(" +
-                        "$array, '{1}');{2}",
+                        "$arr, '{1}');{2}",
                         indent, fieldDef.Name, this.newLineStr);
                 }
             } else if (checkType == FieldType.I64 ||
@@ -1151,12 +1151,12 @@ namespace Brickred.Exchange.Compiler
                 if (isList) {
                     sb.AppendFormat(
                         "{0}$this->{1} = Codec::readListFromArray(" +
-                        "$array, '{1}', 'readInt64FromArray');{2}",
+                        "$arr, '{1}', 'readInt64FromArray');{2}",
                         indent, fieldDef.Name, this.newLineStr);
                 } else {
                     sb.AppendFormat(
                         "{0}$this->{1} = Codec::readInt64FromArray(" +
-                        "$array, '{1}');{2}",
+                        "$arr, '{1}');{2}",
                         indent, fieldDef.Name, this.newLineStr);
                 }
             } else if (checkType == FieldType.U64 ||
@@ -1164,62 +1164,62 @@ namespace Brickred.Exchange.Compiler
                 if (isList) {
                     sb.AppendFormat(
                         "{0}$this->{1} = Codec::readListFromArray(" +
-                        "$array, '{1}', 'readUInt64FromArray');{2}",
+                        "$arr, '{1}', 'readUInt64FromArray');{2}",
                         indent, fieldDef.Name, this.newLineStr);
                 } else {
                     sb.AppendFormat(
                         "{0}$this->{1} = Codec::readUInt64FromArray(" +
-                        "$array, '{1}');{2}",
+                        "$arr, '{1}');{2}",
                         indent, fieldDef.Name, this.newLineStr);
                 }
             } else if (checkType == FieldType.String) {
                 if (isList) {
                     sb.AppendFormat(
                         "{0}$this->{1} = Codec::readListFromArray(" +
-                        "$array, '{1}', 'readStringFromArray');{2}",
+                        "$arr, '{1}', 'readStringFromArray');{2}",
                         indent, fieldDef.Name, this.newLineStr);
                 } else {
                     sb.AppendFormat(
                         "{0}$this->{1} = Codec::readStringFromArray(" +
-                        "$array, '{1}');{2}",
+                        "$arr, '{1}');{2}",
                         indent, fieldDef.Name, this.newLineStr);
                 }
             } else if (checkType == FieldType.Bytes) {
                 if (isList) {
                     sb.AppendFormat(
                         "{0}$this->{1} = Codec::readListFromArray(" +
-                        "$array, '{1}', 'readBytesFromArray');{2}",
+                        "$arr, '{1}', 'readBytesFromArray');{2}",
                         indent, fieldDef.Name, this.newLineStr);
                 } else {
                     sb.AppendFormat(
                         "{0}$this->{1} = Codec::readBytesFromArray(" +
-                        "$array, '{1}');{2}",
+                        "$arr, '{1}');{2}",
                         indent, fieldDef.Name, this.newLineStr);
                 }
             } else if (checkType == FieldType.Bool) {
                 if (isList) {
                     sb.AppendFormat(
                         "{0}$this->{1} = Codec::readListFromArray(" +
-                        "$array, '{1}', 'readBoolFromArray');{2}",
+                        "$arr, '{1}', 'readBoolFromArray');{2}",
                         indent, fieldDef.Name, this.newLineStr);
                 } else {
                     sb.AppendFormat(
                         "{0}$this->{1} = Codec::readBoolFromArray(" +
-                        "$array, '{1}');{2}",
+                        "$arr, '{1}');{2}",
                         indent, fieldDef.Name, this.newLineStr);
                 }
             } else if (checkType == FieldType.Struct) {
                 if (isList) {
                     sb.AppendFormat(
                         "{0}$this->{1} = Codec::readStructListFromArray(" +
-                        "$array, '{1}', '{2}');{3}",
+                        "$arr, '{1}', '{2}');{3}",
                         indent, fieldDef.Name,
                         GetStructFullQualifiedName(fieldDef.RefStructDef),
                         this.newLineStr);
                 } else {
                     sb.AppendFormat(
                         "{0}$this->{1} = Codec::readStructFromArray(" +
-                        "$array, '{1}', '{2}');{3}",
+                        "$arr, '{1}', '{2}');{3}",
                         indent, fieldDef.Name,
                         GetStructFullQualifiedName(fieldDef.RefStructDef),
                         this.newLineStr);
@@ -1344,13 +1344,13 @@ namespace Brickred.Exchange.Compiler
                 "final class {0}{1}" +
                 "{{{1}" +
                 "{2}" +
-                "    private static $s_name_id_map_ = array({1}" +
+                "    private static $s_name_id_map_ = [{1}" +
                 "{3}" +
-                "    );{1}" +
+                "    ];{1}" +
                 "{1}" +
-                "    private static $s_id_name_map_ = array({1}" +
+                "    private static $s_id_name_map_ = [{1}" +
                 "{4}" +
-                "    );{1}" +
+                "    ];{1}" +
                 "{1}" +
                 "    public static function getIdByName($name){1}" +
                 "    {{{1}" +

@@ -361,7 +361,7 @@ final class Codec
 
     public static function readList($s, $read_func)
     {
-        $var = array();
+        $var = [];
         $length = self::readLength($s);
 
         for ($i = 0; $i < $length; ++$i) {
@@ -373,7 +373,7 @@ final class Codec
 
     public static function readStructList($s, $struct_name)
     {
-        $var = array();
+        $var = [];
         $length = self::readLength($s);
 
         for ($i = 0; $i < $length; ++$i) {
@@ -470,109 +470,109 @@ final class Codec
         return $bin;
     }
 
-    public static function readIntFromArray($array, $index)
+    public static function readIntFromArray($arr, $index)
     {
-        if (!isset($array[$index])) {
+        if (!isset($arr[$index])) {
             throw new CodecException("array['$index'] not set");
         }
-        if (is_int($array[$index]) &&
-            is_float($array[$index])) {
-            return $array[$index];
+        if (is_int($arr[$index]) &&
+            is_float($arr[$index])) {
+            return $arr[$index];
         }
 
-        return (int)$array[$index];
+        return (int)$arr[$index];
     }
 
-    public static function readBoolFromArray($array, $index)
+    public static function readBoolFromArray($arr, $index)
     {
-        if (!isset($array[$index])) {
+        if (!isset($arr[$index])) {
             throw new CodecException("array['$index'] not set");
         }
 
-        return (bool)$array[$index];
+        return (bool)$arr[$index];
     }
 
-    public static function readStringFromArray($array, $index)
+    public static function readStringFromArray($arr, $index)
     {
-        if (!isset($array[$index])) {
+        if (!isset($arr[$index])) {
             throw new CodecException("array['$index'] not set");
         }
 
-        return (string)$array[$index];
+        return (string)$arr[$index];
     }
 
-    public static function readBytesFromArray($array, $index)
+    public static function readBytesFromArray($arr, $index)
     {
-        if (!isset($array[$index])) {
+        if (!isset($arr[$index])) {
             throw new CodecException("array['$index'] not set");
         }
 
-        return base64_decode($array[$index]);
+        return base64_decode($arr[$index]);
     }
 
-    public static function readInt64FromArray($array, $index)
+    public static function readInt64FromArray($arr, $index)
     {
-        if (!isset($array[$index])) {
+        if (!isset($arr[$index])) {
             throw new CodecException("array['$index'] not set");
         }
-        return new \Brickred\Exchange\Int64((string)$array[$index]);
+        return new \Brickred\Exchange\Int64((string)$arr[$index]);
     }
 
-    public static function readUInt64FromArray($array, $index)
+    public static function readUInt64FromArray($arr, $index)
     {
-        if (!isset($array[$index])) {
+        if (!isset($arr[$index])) {
             throw new CodecException("array['$index'] not set");
         }
-        return new \Brickred\Exchange\UInt64((string)$array[$index]);
+        return new \Brickred\Exchange\UInt64((string)$arr[$index]);
     }
 
-    public static function readStructFromArray($array, $index, $struct_name)
+    public static function readStructFromArray($arr, $index, $struct_name)
     {
-        if (!isset($array[$index])) {
+        if (!isset($arr[$index])) {
             throw new CodecException("array['$index'] not set");
         }
-        if (!is_array($array[$index])) {
+        if (!is_array($arr[$index])) {
             throw new CodecException("array['$index'] must be array");
         }
 
         $var = new $struct_name;
-        $var->fromArray($array[$index]);
+        $var->fromArray($arr[$index]);
         return $var;
     }
 
-    public static function readListFromArray($array, $index, $read_func)
+    public static function readListFromArray($arr, $index, $read_func)
     {
-        $var = array();
+        $var = [];
 
-        if (!isset($array[$index])) {
+        if (!isset($arr[$index])) {
             throw new CodecException("array['$index'] not set");
         }
-        if (!is_array($array[$index])) {
+        if (!is_array($arr[$index])) {
             throw new CodecException("array['$index'] must be array");
         }
 
-        for ($i = 0; $i < count($array[$index]); ++$i) {
-            $var[$i] = self::$read_func($array[$index], $i);
+        for ($i = 0; $i < count($arr[$index]); ++$i) {
+            $var[$i] = self::$read_func($arr[$index], $i);
         }
 
         return $var;
     }
 
-    public static function readStructListFromArray($array, $index,
+    public static function readStructListFromArray($arr, $index,
                                                    $struct_name)
     {
-        $var = array();
+        $var = [];
 
-        if (!isset($array[$index])) {
+        if (!isset($arr[$index])) {
             throw new CodecException("array['$index'] not set");
         }
-        if (!is_array($array[$index])) {
+        if (!is_array($arr[$index])) {
             throw new CodecException("array['$index'] must be array");
         }
 
-        for ($i = 0; $i < count($array[$index]); ++$i) {
+        for ($i = 0; $i < count($arr[$index]); ++$i) {
             $var[$i] = self::readStructFromArray(
-                $array[$index], $i, $struct_name);
+                $arr[$index], $i, $struct_name);
         }
 
         return $var;
