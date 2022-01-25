@@ -266,9 +266,11 @@ namespace Brickred.Exchange.Compiler
                     ProtocolDescriptor.StructDef.FieldDef fieldDef =
                         structDef.Fields[j];
 
-                    if (fieldDef.Type == FieldType.I64) {
+                    if (fieldDef.Type == FieldType.I64 ||
+                        fieldDef.Type == FieldType.I64V) {
                         useBrickredExchangeInt64 = true;
-                    } else if (fieldDef.Type == FieldType.U64) {
+                    } else if (fieldDef.Type == FieldType.U64 ||
+                               fieldDef.Type == FieldType.U64V) {
                         useBrickredExchangeUInt64 = true;
                     }
                 }
