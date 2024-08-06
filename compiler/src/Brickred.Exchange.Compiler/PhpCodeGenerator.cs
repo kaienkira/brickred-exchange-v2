@@ -1017,9 +1017,18 @@ namespace Brickred.Exchange.Compiler
                     "{0}$output['{1}'] = $this->{1};{2}",
                     indent, fieldDef.Name, this.newLineStr);
             } else if (checkType == FieldType.Bytes) {
-                sb.AppendFormat(
-                    "{0}$output['{1}'] = base64_encode($this->{1});{2}",
-                    indent, fieldDef.Name, this.newLineStr);
+                if (isList) {
+                    sb.AppendFormat(
+                        "{0}$output['{1}'] = [];{2}" +
+                        "{0}for ($i = 0; $i < count($this->{1}); ++$i) {{{2}" +
+                        "{0}    $output['{1}'][$i] = base64_encode($this->{1}[$i]);{2}" +
+                        "{0}}}{2}",
+                        indent, fieldDef.Name, this.newLineStr);
+                } else {
+                    sb.AppendFormat(
+                        "{0}$output['{1}'] = base64_encode($this->{1});{2}",
+                        indent, fieldDef.Name, this.newLineStr);
+                }
             } else if (checkType == FieldType.I64 ||
                        checkType == FieldType.U64 ||
                        checkType == FieldType.I64V ||

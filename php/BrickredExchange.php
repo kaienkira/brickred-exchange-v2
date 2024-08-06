@@ -169,7 +169,7 @@ final class Codec
             $var -= 4294967296;
         }
 
-        return $var;
+        return (int)$var;
     }
 
     public static function readUInt8($s)
@@ -313,9 +313,9 @@ final class Codec
         if ($var < 253) {
             return new Int64($var);
         } else if ($var === 253) {
-            return new Int64(self::readInt16($s));
+            return new Int64(self::readUInt16($s));
         } else if ($var === 254) {
-            return new Int64(self::readInt32($s));
+            return new Int64(self::readUInt32($s));
         } else {
             return self::readInt64($s);
         }
@@ -418,7 +418,9 @@ final class Codec
     {
         $var = $var & 0xffffffff;
 
-        if ($var < 254) {
+        if ($var < 0) {
+            return self::writeInt8(255).self::writeInt32($var);
+        } else if ($var < 254) {
             return self::writeInt8($var);
         } else if ($var <= 65535) {
             return self::writeInt8(254).self::writeInt16($var);
@@ -431,7 +433,7 @@ final class Codec
     {
         $v = $var->toString();
         if (bccomp($v, '0') < 0) {
-            $str = bcadd($v, '18446744073709551616');
+            $v = bcadd($v, '18446744073709551616');
         }
 
         if (bccomp($v, '253') < 0) {
@@ -439,7 +441,7 @@ final class Codec
         } else if (bccomp($v, '65535') <= 0) {
             return self::writeInt8(253).self::writeInt16((int)$v);
         } else if (bccomp($v, '4294967295') <= 0) {
-            return self::writeInt8(254).self::writeInt32((int)$v);
+            return self::writeInt8(254).self::writeInt32((float)$v);
         } else {
             return self::writeInt8(255).self::writeInt64($var);
         }
