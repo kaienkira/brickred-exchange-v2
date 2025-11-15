@@ -4,11 +4,11 @@
 CC_ ?= gcc
 CXX_ ?= g++
 LINKER_ ?= g++
-AR_ ?= ar crv
+AR_ ?= ar cr
 RM_ ?= rm -f
 SED_ ?= sed
 
-CFLAGS ?= -Wall -c -std=c99 -D_POSIX_C_SOURCE=2 $(C_FLAG)
+CFLAGS ?= -Wall -c -std=c11 $(C_FLAG)
 CPPFLAGS ?= -Wall -c -std=c++17 $(CPP_FLAG)
 ELFLAGS ?= $(EL_FLAG)
 DLFLAGS ?= -shared -fPIC
@@ -20,7 +20,7 @@ DEPFILES += $(DEPFILE)
 #-*- FUNCTIONS -*-
 #==============================================================================
 define ECHO
-    @printf "\033[;32m"; printf $1; printf "\033[0m\n"
+	@printf "\033[;32m%s\033[0m\n" $1
 endef
 
 define make_c_rule
@@ -47,19 +47,11 @@ endef
 #-*- MAIN -*-
 #==============================================================================
 ifeq ($(LINK_TYPE), exec)
-    ifeq ($(OS), Windows_NT)
-        FINAL_TARGET = $(TARGET).exe
-    else
-        FINAL_TARGET = $(TARGET)
-    endif
+	FINAL_TARGET = $(TARGET)
 endif
 
 ifeq ($(LINK_TYPE), dynamic)
-    ifeq ($(OS), Windows_NT)
-        FINAL_TARGET = $(TARGET).dll
-    else
-        FINAL_TARGET = $(TARGET).so
-    endif
+	FINAL_TARGET = $(TARGET).so
     CFLAGS += -fPIC
     CPPFLAGS += -fPIC
 endif
@@ -74,8 +66,8 @@ debug: CFLAGS += -g
 debug: CPPFLAGS += -g
 debug: $(FINAL_TARGET)
 
-release: CFLAGS += -O2 -fno-strict-aliasing
-release: CPPFLAGS += -O2
+release: CFLAGS += -g -O2 -fno-strict-aliasing
+release: CPPFLAGS += -g -O2
 release: $(FINAL_TARGET)
 
 profile: CFLAGS += -g -pg
