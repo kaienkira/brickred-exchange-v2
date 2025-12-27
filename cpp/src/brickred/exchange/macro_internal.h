@@ -280,9 +280,9 @@
         _var.clear();                         \
         _var.reserve(length);                 \
         for (size_t i = 0; i < length; ++i) { \
-            _enum_type v;                     \
-            READ_ENUM(v, _enum_type);         \
-            _var.push_back(v);                \
+            _enum_type v2;                    \
+            READ_ENUM(v2, _enum_type);        \
+            _var.push_back(v2);               \
         }                                     \
     } while (0)                               \
 
