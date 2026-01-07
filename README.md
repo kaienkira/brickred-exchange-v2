@@ -1,7 +1,9 @@
 brickred-exchange-v2
 ====================
 
-Brickred Studio data serialization tool
+* Brickred Studio data serialization tool
+* This project is deprecated,
+  Please Use https://github.com/kaienkira/brickred-exchange-v3 instead
 
 Build Compiler
 --------------

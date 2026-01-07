@@ -477,7 +477,7 @@ final class Codec
         if (!isset($arr[$index])) {
             throw new CodecException("array['$index'] not set");
         }
-        if (is_int($arr[$index]) &&
+        if (is_int($arr[$index]) ||
             is_float($arr[$index])) {
             return $arr[$index];
         }
